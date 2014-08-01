@@ -1,0 +1,12 @@
+# The stage files and Portage snapshot in this repository have been pushed to the DS-Gentoo SourceForge page
+# since they are too big to upload to GitHub (currently GitHub does not accept files greater than 100MB)
+# If you want them you need to clone the DS-Gentoo SourceForge repository.
+# The files were pushed to SourceForge in order to reduce the strain on Gentoo's official distribution server 
+# (http://distfiles.gentoo.org/)
+
+# Testing Files can be pulled using git clone ssh://maffblaster@git.code.sf.net/p/dsgentoo/code testing
+
+
+testing/
+
+
