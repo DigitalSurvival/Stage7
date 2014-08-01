@@ -3,14 +3,25 @@ Stage7
 
 The goal of Stage7 is to provide an automatic Gentoo Linux install for full size computers. Many install scripts have been made in the past, however none of them have been maintained. Stage7 is an attempt to create an easy to use, continually maintained Gentoo installer.
 
-![Stage7 Graphic](raw.githubusercontent.com/DigitalSurvival/Stage7/master/graphics/experimental/banner/stage7_banner_plain_white_banana-brick.png "Graphic")
+![Stage7 Graphic](http://bit.ly/1m6NG9H "Graphic")
 
 Why Stage7? In the Bible, the number 7 is the number of fullness, completion, and perfection (Gen 2:2; Ex 21:2; Rev 3:1). In the Gentoo Linux community the term "stage" followed by a number refers to how completed a Gentoo base system is. Stage7 hopes to provide a complete Gentoo Linux system straight off the disk.
 
-How can you help?
+**How do you get Stage7?**
+
+You can download Stage7 by running this command on your favorite Linux distribution:
+<code>wget http://bit.ly/getStage7 getStage7.sh</code>
+
+Make the script executable by running this command:
+<code>chmod +x getStage7.sh<code>
+
+**How do you use Stage7?** 
+
+It's not done yet, so you'll have to wait until then before you can use it.
+
+**How can you help?**
 * Create some awesome graphics using the text "Stage7" in an artistic way. Check out the fonts in the graphics/fonts folder for some ideas
 * Offer suggestions/feature requests. I'm always open to suggestions.
-
 
 
 Soon a full repository will emerge.
