@@ -24,9 +24,9 @@
   3. Start Digital Survival server integration after desktop is successful.
 - [ ] Digital Survival integration
   1. Digital Survival Package Mirror overlay support.
-  2. 
+  2. Utilize Gentoo's webapp-config program.
 - [ ] Create ncurses install menu for terminals
-  1. Research.
+  1. Research ncurses.
 - [ ] Create X server install menu for anything X server dependant
   1. Research the options on X server interfaces. Find something with minimal dependencies.
 - [ ] Make importing of preconfigured scripts easy for end users.
