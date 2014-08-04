@@ -1,11 +1,11 @@
 
-##ToDo:
+###ToDo
 - [ ] Write a package building script to auto-generate new releases.
   1. Implement Stage7 script super tight compression for minimal bandwidth consumption.
 - [ ] Write end user instructions and documentation.
   1. Update the project's README page with accurate "how to get" and "how to use" information.
   2. Keep the example configuration files tidy after adding new features.
-  3. Search the configuration_options files in /docs folder for #todo stuff.
+  3. Search the configuration_options file in /docs folder for #todo stuff.
   4. Generate a PDF of available configuration options.
 - [ ] Modernize the Stage7 base (formerly Quickstart's base)
   1. Add GPT and EFI support.
@@ -35,3 +35,4 @@
   1. Dual boot support using os-prober other operating systems. Mainly Windows XP, Vista, 7, 8, and 8.1.
   2. Add Laptop/Notebook low power support.
   3. Add ARM microprocessor architecture support.
+  4. Add support for a Steam profile to profile's list. This would definitely be a step beyond OpenBox...
