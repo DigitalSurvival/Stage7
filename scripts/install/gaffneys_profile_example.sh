@@ -1,19 +1,23 @@
 # $Id$
 # This is an example of a profile that could be used for a x86 server.
 
-# Add a link to a stage3 file.
+# Add an example link to a stage3 file.
 stage_uri https://sourceforge.net/p/dsgentoo/code/ci/master/tree/stages/x86/stage3-i686-20140225.tar.bz2?format=raw
 
-# Add a link to a portage snapshot.
+# Add an example link to portage snapshot.
 tree_type snapshot https://sourceforge.net/p/dsgentoo/code/ci/master/tree/snapshots/portage-20140302.tar.bz2?format=raw
 
-# You will need to set the hostname for your new system.
+# Sets the install mode for the system
+install_mode normal
+
+# Set the hostname for your new system.
 hostname ExampleBox
 
 # Sets the root password. For security purposes you MUST specify a root password.
 rootpw Ex@mP1eP@$$w0rd
 
-# "grub" defaults to grub 2. You can also use use "grub-legacy" or "lilo".
+# "grub" defaults to Grub 2. You can also use use "grub-legacy", "lilo", or "none" (each without the quotes).
+# If Grub 2 is used and EFI is desired, you'll need to specify a FAT32 formatted /boot/efi directory. 
 bootloader grub
 
 # Specifies if how you want your partition layout to look after the install.

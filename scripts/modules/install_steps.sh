@@ -181,7 +181,7 @@ install_portage_tree() {
   elif [ "${tree_type}" = "none" ]; then
     warn "'none' specified...skipping..."
   else
-    die "Unrecognized tree_type: ${tree_type}"
+    die "Unrecognised tree_type: ${tree_type}"
   fi
 }
 
@@ -191,6 +191,11 @@ set_root_password() {
   elif [ -n "${root_password}" ]; then
     spawn_chroot "echo 'root:${root_password}' | chpasswd" || die "Could not set the root password."
   fi
+}
+
+set_hostname() {
+if [ -n "${hostname}" ]; then
+spawn_chroot "echo hostname=\"${hostname}\" > ${chroot_dir}/etc/conf.d/hostname" || die "Could not set system hostname."
 }
 
 set_timezone() {
@@ -206,6 +211,8 @@ set_timezone() {
 build_kernel() {
   if [ "${kernel_sources}" = "none" ]; then
     debug build_kernel "kernel_sources is 'none'...skipping kernel build."
+  elif 
+  
   else
     spawn_chroot "emerge ${kernel_sources}" || die "Could not emerge kernel sources."
     spawn_chroot "emerge genkernel" || die "Could not emerge genkernel."
@@ -314,8 +321,12 @@ add_and_remove_services() {
 install_bootloader() {
   if [ "${bootloader}" = "none" ]; then
     debug install_bootloader "bootloader is 'none'...skipping"
+  elif [ "${bootloader}" = "grub-legacy" ]; then
+	spawn_chroot "emerge --noreplace sys-boot/grub:0" || die "Could not emerge Grub-Legacy bootloader."
+  elif [ "${bootloader}" = "lilo" ]; then
+	spawn_chroot "emerge sys-boot/lilo" || die "Could not emerge the LiLo bootloader."
   else
-    spawn_chroot "emerge ${bootloader}" || die "Could not emerge the bootloader."
+    spawn_chroot "emerge ${bootloader}" || die "Could not emerge the Grub2 bootloader."
   fi
 }
 
@@ -341,7 +352,7 @@ install_extra_packages() {
 
 run_post_install_script() {
   if [ -n "${post_install_script_uri}" ]; then
-    fetch "${post_install_script_uri}" "${chroot_dir}/var/tmp/post_install_script" || die "could not fetch post-install script"
+    fetch "${post_install_script_uri}" "${chroot_dir}/var/tmp/post_install_script" || die "Could not fetch post-install script"
     chmod +x "${chroot_dir}/var/tmp/post_install_script"
     spawn_chroot "/var/tmp/post_install_script" || die "Error running post-install script."
     spawn "rm ${chroot_dir}/var/tmp/post_install_script"
@@ -362,7 +373,7 @@ finishing_cleanup() {
   fi
   if [ -e /tmp/install.swapoff ]; then
     for swap in $(</tmp/install.swapoff); do
-      spawn "swapoff ${swap}" || warn "could not deactivate swap on ${swap}"
+      spawn "swapoff ${swap}" || warn "Could not deactivate swap on ${swap}"
     done
     rm /tmp/install.swapoff 2>/dev/null
   fi
