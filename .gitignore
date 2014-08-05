@@ -6,7 +6,8 @@
 
 # Testing Files can be pulled using git clone ssh://maffblaster@git.code.sf.net/p/dsgentoo/code testing
 
-
+# Removes Windows' index files
+**\Thumbs.db
 testing/
 
 
