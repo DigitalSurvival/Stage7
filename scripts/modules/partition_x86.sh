@@ -1,13 +1,13 @@
 # $Id$
 
 sanity_check_config_partition() {
-  warn "Sanity checking partition config for x86."
+  warn "Sanity checking partition configuration for x86."
 }
 
 create_disklabel() {
   local device=$1
 
-  debug create_disklabel "Creating new MSDOS disklabel..."
+  debug create_disklabel "Creating new MSDOS disk label..."
   fdisk_command ${device} "o"
   return $?
 }
@@ -18,7 +18,7 @@ get_num_primary() {
   local primary_count=0
   local device_temp="partitions_$(echo ${device} sed -e 's:^.\+/::')"
   for partition in $(eval echo \${${device_temp}}); do
-    debug get_num_primary "partition is ${partition}"
+    debug get_num_primary "Partition is ${partition}"
     local minor=$(echo ${partition} | cut -d: -f1)
     if [ "${minor}" -lt "5" ]; then
       primary_count=$(expr ${primary_count} + 1)

@@ -24,7 +24,7 @@ spawn() {
 spawn_chroot() {
   local cmd=$1
 
-  debug spawn_chroot "Wrapping command '${cmd}' in chroot script..."
+  debug spawn_chroot "Wrapping command '${cmd}' in a chroot script..."
   
   echo -e '#!/bin/bash -l\n'${cmd}'\nexit $?' > ${chroot_dir}/var/tmp/spawn.sh
   chmod +x ${chroot_dir}/var/tmp/spawn.sh

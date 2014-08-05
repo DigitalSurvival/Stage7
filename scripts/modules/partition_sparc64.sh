@@ -6,7 +6,7 @@ sanity_check_config_partition() {
     for partition in $(eval echo \${${device_temp}}); do
       local minor=$(echo ${partition} | cut -d: -f1)
       if [ "${minor}" = "3" ]; then
-        error "You cannot define partition number 3 with a sun disklabel (taken by whole disk)."
+        error "You cannot define partition number 3 with a sun disk label (taken by whole disk)."
         return 1
       fi
     done
@@ -16,8 +16,8 @@ sanity_check_config_partition() {
 create_disklabel() {
   local device=$1
 
-  debug create_disklabel "creating new sun disklabel"
-  spawn "dd if=/dev/zero of=${device} bs=512 count=1" || die "couldn't clear first block"
+  debug create_disklabel "Creating new sun disk label."
+  spawn "dd if=/dev/zero of=${device} bs=512 count=1" || die "Couldn't clear first block."
   fdisk_command ${device} "0\n\n\n\n\n\n\n\n\nd\n1\nd\n2\n"
   return $?
 }

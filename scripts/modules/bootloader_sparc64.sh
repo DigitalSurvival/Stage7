@@ -2,7 +2,7 @@
 
 sanity_check_config_bootloader() {
   if [ -z "${bootloader}" ]; then
-    warn "bootloader not set...assuming silo"
+    warn "Bootloader not set...assuming silo."
     bootloader="silo"
   fi
 }
@@ -29,7 +29,7 @@ configure_bootloader_silo() {
     fi
   done
   if ! spawn_chroot "/sbin/silo -C /boot/silo.conf"; then
-    error "could not install silo"
+    error "Could not install silo bootloader."
     return 1
   fi
 }

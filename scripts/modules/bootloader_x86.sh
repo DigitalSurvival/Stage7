@@ -2,8 +2,8 @@
 
 sanity_check_config_bootloader() {
   if [ -z "${bootloader}" ]; then
-    warn "Bootloader not set...using Grub 2 as the default."
-    bootloader="grub"
+    warn "Bootloader not set...using grub2 as the default."
+    bootloader="grub2"
   fi
 }
 
@@ -44,20 +44,20 @@ configure_bootloader_grub-legacy() {
   fi
   [ -z "${bootloader_install_device}" ] && bootloader_install_device="$(get_device_and_partition_from_devnode ${boot} | cut -d '|' -f1)"
   if ! spawn_chroot "grub-install ${bootloader_install_device}"; then
-    error "Could not install Grub Legacy to ${bootloader_install_device}"
+    error "Could not install grub-legacy to ${bootloader_install_device}"
     return 1
   fi
 }
 
 # Grub 2 has become the default bootloader.
-configure_bootloader_grub()	{
+configure_bootloader_grub2()	{
 # BIOS/MBR or BIOS/GPT
 
 #UEFI/GPT
 grub2-install --target=x86_64-efi
 }
 
-# Give the user a choice to use lilo
+# 
 configure_bootloader_lilo() {
 
 

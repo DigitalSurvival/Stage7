@@ -2,7 +2,7 @@
 
 sanity_check_config_bootloader() {
   if [ -z "${bootloader}" ]; then
-    warn "bootloader not set...assuming palo"
+    warn "Bootloader not set...assuming palo"
     bootloader="palo"
   fi
 }
@@ -25,7 +25,7 @@ configure_bootloader_palo() {
     echo "root=/dev/ram0 init=/linuxrc ramdisk=8192 real_root=${root} initrd=${boot_minor}/boot/${initrd} ${bootloader_kernel_args}" >> ${chroot_dir}/etc/palo.conf
   fi
   if ! spawn_chroot "/sbin/palo"; then
-    error "could not install palo"
+    error "Could not install palo bootloader."
     return 1
   fi
 }
