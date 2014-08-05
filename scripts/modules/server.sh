@@ -18,18 +18,18 @@ server_send_request() {
   local command=$1
   local args=$2
 
-  fetch "quickstart:///${command}?${args}" "/tmp/server_response"
+  fetch "stage7:///${command}?${args}" "/tmp/server_response"
   cat /tmp/server_response
 }
 
 server_get_profile() {
   local profile_uri=$(server_send_request "get_profile_path" "mac=${mac_address}")
   if [ -z "${profile_uri}" ]; then
-    warn "Error in response from server...could not retrieve profile URI."
+    warn "Error in response the from server...could not retrieve profile URI."
     return 1
   else
     debug server_get_profile "profile URI is ${profile_uri}"
-    if ! fetch "${profile_uri}" "/tmp/quickstart_profile"; then
+    if ! fetch "${profile_uri}" "/tmp/stage7_profile"; then
       error "Could not fetch a profile."
       exit 1
     fi

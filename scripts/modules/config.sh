@@ -262,7 +262,7 @@ sanity_check_config() {
     fatal=1
   fi
   if [ -z "${chroot_dir}" ]; then
-    error "chroot_dir is not defined (this can only happen if you set it to a blank string)"
+    error "chroot_dir is not defined (this can only happen if you set it to a blank string)."
     fatal=1
   fi
   if [ -z "${stage_uri}" ]; then
@@ -274,16 +274,13 @@ sanity_check_config() {
     tree_type="sync"
   fi
   if [ "${tree_type}" = "snapshot" -a -z "${portage_snapshot_uri}" ]; then
-    error "You must specify a portage snapshot URI with tree_type snapshot."
+    error "You must specify a Portage snapshot URI with tree_type snapshot."
     fatal=1
   fi
-  
-  # Added support for setting the host name of the system.
-  if [ -z "${host_name}" ]; then
-    error "You must specify a computer host name before you can continue..."
-    fatal=1
+  if [ -z "${hostname}" ]; then
+    warn "hostname not set...defaulting to 'Stage7'."
+	hostname="Stage7"
   fi
-  
   if [ -z "${root_password}" -a -z "${root_password_hash}" ]; then
     error "You must specify a root password before you can continue..."
     fatal=1

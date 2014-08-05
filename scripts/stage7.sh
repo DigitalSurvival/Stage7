@@ -25,7 +25,7 @@ usage() {
   fi
   cat <<EOF
 Usage:
-  quickstart [-h|--help] [-d|--debug] [-v|--verbose] [-q|--quiet]
+  stage7 [-h|--help] [-d|--debug] [-v|--verbose] [-q|--quiet]
              [-s|--sanity-check] [--version] <profile>
 
 Options:
@@ -34,7 +34,7 @@ Options:
   -q|--quiet           Only output fatal error messages
   -v|--verbose         Be verbose (show external command output)
   -s|--sanity-check    Sanity check install profile and exit
-  -c|--client <host>   Act as a client and connect to a quickstartd
+  -c|--client <host>   Act as a client and connect to a Stage7d
   --version            Print version and exit
 
 Arguments:
@@ -43,6 +43,7 @@ EOF
 }
 
 # Import modules
+# You'll at least need these modules on the LiveCD install medium.
 import output
 import misc
 import spawn
@@ -90,7 +91,7 @@ do
       shift
       ;;
     --version)
-      echo "Quickstart version ${VERSION}"
+      echo "Stage7 version ${VERSION}"
       exit 0
       ;;
     -*)
@@ -106,7 +107,7 @@ done
 if [ -n "${server}" ]; then
   server_init
   if server_get_profile; then
-    profile="/tmp/quickstart_profile"
+    profile="/tmp/stage7_profile"
   fi
 fi
 
@@ -125,7 +126,7 @@ else
     exit 1
   fi
   arch=$(get_arch)
-  debug main "arch is ${arch}"
+  debug main "Arch is ${arch}"
   [ -z "${arch}" ] && die "Could not determine arch!"
   runstep sanity_check_config "Sanity checking config"
   if [ "${sanitycheck}" = "1" ]; then
@@ -153,8 +154,9 @@ runstep unpack_stage_tarball "Fetching and unpacking stage tarball..."
 runstep prepare_chroot "Preparing chroot..."
 
 if [ "${install_mode}" != "stage4" ]; then
-  runstep install_portage_tree "Installing portage tree..."
+  runstep install_portage_tree "Installing Portage tree..."
   runstep set_root_password "Setting root password..."
+  runstep set_hostname "Setting system hostname..."
   runstep set_timezone "Setting timezone."
   runstep setup_fstab "Setting up /etc/fstab"
   runstep build_kernel "Building kernel..."

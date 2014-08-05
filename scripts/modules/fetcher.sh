@@ -32,7 +32,7 @@ fetch() {
   fi
 }
 
-fetch_quickstart() {
+fetch_stage7() {
   local uri=$1
   local localfile=$2
 
