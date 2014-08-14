@@ -1,31 +1,42 @@
 $Id$
 
-The follow is a list of all the valid configuration options with description and
+The following is a list of all the valid configuration options with descriptions and
 valid parameters.
 
 #todo
-install_mode - Choose the install mode.
+install_mode - Choose the install mode and profile.
 
   Usage:
     install_mode <mode> <profile>
 
   Parameters:
-    mode - The install mode (normal, chroot, stage4, stage7). 
+    mode - The install mode (normal, chroot, stage4, stage7). Stage7
+		   is the only install mode that accepts the <profile> parameter.
 	
-	A normal install works from a stage3 tarball with bootloader setup. 
-	A chroot install is the same as a normal install, except it skips 
-	the partitioning and bootloader setup. 
-	A stage4 install is like a normal install, except that it skips straight from unpacking the 
-	stage tarball to configuring the bootloader. This is very handy for system backups.
-	A stage7 install works from a stage3 tarball, but allows for defining feature sets of a complete
-	system.
+		normal - A normal install works from a stage3 tarball 
+				 with bootloader setup. This will be a basic system
+				 without any custom configuration besides adding a user.
+		chroot - A chroot install is the same as a normal install, 
+				 except it skips the partitioning and bootloader setup. 
+		stage4 - A stage4 install is like a normal install, but it 
+				 skips straight from unpacking the stage4 tarball to 
+				 configuring the bootloader. This is very handy when restoring 
+				 system backups if you have created a stage4 backups of your system(s).
+		stage7 - A stage7 install works like a normal install (from a stage3 
+				 tarball) but allows for "profiles" which are defining feature sets 
+				 for a "complete" system.
 
-	profile - Sets the system profile; modifies the depth of the install's configuration.
-	
-    xorg - Sets the desktop profile. Installs xorg-server package without any window managers.
-	openbox - Sets the desktop profile. Installs xorg-server package and the OpenBox window manager.
-	server - Sets the server profile.
-	ds-server - Installs a headless server, and configures your system with the Digital Survival feature set.
+	profile - Sets the Stage7 system profile which modifies the depth of the 
+			  install's configuration.
+	  
+		xorg       - Installs xorg-server and xterm packages without any window managers.
+		openbox    - Installs xorg-server package and the OpenBox window manager.
+		ds-desktop - Installs a desktop version of Digital Survival Linux. 
+					 Uses OpenBox as a base.
+		server     - Sets the server profile. No xorg-server or window managers for 
+				     maximum resource allocation to tasks.
+		ds-server  - Installs a headless server, and configures your system with 
+					 the Digital Survival feature set.
 	
 part - Creates a partition.
 

@@ -1,15 +1,15 @@
 
 ###ToDo
 - [ ] Write a package building script to auto-generate new releases.
-  1. Implement Stage7 script super tight compression for minimal bandwidth consumption.
+  1. Implement Stage7 script super tight compression for minimal bandwidth consumption (xz).
 - [ ] Write end user instructions and documentation.
   1. Update the project's README page with accurate "how to get" and "how to use" information.
   2. Keep the example configuration files tidy after adding new features.
   3. Search the configuration_options file in /docs folder for #todo stuff.
-  4. Generate a PDF of available configuration options.
+  4. Generate a PDF of available configuration options in a pretty format.
 - [ ] Modernize the Stage7 base (formerly Quickstart's base)
   1. Add GPT and EFI support.
-  2. Add Grub2 support.
+  2. Add Grub2 support. *in progress*
   3. Add Linux Loader (Lilo) support.
   4. Add Systemd support (this might take a while! Do not expect it to be the first thing completed.).
   5. Add GNU Parted support.
@@ -24,9 +24,9 @@
   3. Start Digital Survival server integration after desktop is successful.
 - [ ] Digital Survival integration
   1. Digital Survival Package Mirror overlay support.
-  2. Utilize Gentoo's webapp-config program.
+  2. Utilize Gentoo's webapp-config program for web applications such as OwnCloud, Wordpress, MediaWiki, etc.
 - [ ] Create ncurses install menu for terminals
-  1. Research ncurses.
+  1. Research ncurses. *Started*
 - [ ] Create X server install menu for anything X server dependant
   1. Research the options on X server interfaces. Find something with minimal dependencies.
 - [ ] Make importing of preconfigured scripts easy for end users.
