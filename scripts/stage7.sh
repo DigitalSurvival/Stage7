@@ -2,8 +2,7 @@
 # $Id$
 
 # Constants
-VERSION=0.0.2
-NEW_FEATURE="Added support to set the system's hostname; defaults to \"DigitalSurvival\""
+VERSION=0.0.1
 
 # Options variables
 debug=0
@@ -93,7 +92,6 @@ do
       ;;
     --version)
       echo "Stage7 version ${VERSION}"
-	  echo -e "${NEW_FEATURE}"
       exit 0
       ;;
     -*)

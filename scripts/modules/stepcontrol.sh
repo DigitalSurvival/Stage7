@@ -21,15 +21,15 @@ runstep() {
       server_send_request "update_status" "func=${func}&descr=$(echo "${descr}" | sed -e 's: :+:g')"
     fi
     if $(isafunc pre_${func}); then
-      debug runstep "Executing pre-hook for ${func}."
+      debug runstep "Executing pre-hook for ${func}"
       pre_${func}
     fi
     ${func}
     if $(isafunc post_${func}); then
-      debug runstep "Executing post-hook for ${func}."
+      debug runstep "Executing post-hook for ${func}"
       post_${func}
     fi
   else
-    debug runstep "Skipping step ${func}."
+    debug runstep "Skipping step ${func}"
   fi
 }

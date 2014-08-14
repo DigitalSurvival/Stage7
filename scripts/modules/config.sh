@@ -1,12 +1,9 @@
 # $Id$
 
-#todo: adding profile support
-install_options() {
+install_mode() {
   local mode=$1
-  local profile=$2
-  
+
   install_mode="${mode}"
-  install_profile="${profile}"
 }
 
 part() {
@@ -260,12 +257,8 @@ sanity_check_config() {
 
   debug sanity_check_config "$(set | grep '^[a-z]')"
 
-  if [ -n "${install_mode}" -a "${install_mode}" != "normal" -a "${install_mode}" != "chroot" -a "${install_mode}" != "stage4" -a "${install_mode}" != "stage7"]; then
-    error "install_mode must be 'normal', 'chroot', 'stage4', or 'stage7'."
-    fatal=1
-  fi
-  if [ -n "${install_profile}" -a "${install_profile}" != "desktop" -a "${install_profile}" != "desktop/openbox" -a "${install_profile}" != "hardened/server" -a "${install_profile}" != "hardened/ds-server"]; then
-    error "install_profile must be 'desktop', 'desktop/openbox', 'hardened/server', or 'hardened/ds-server'"
+  if [ -n "${install_mode}" -a "${install_mode}" != "normal" -a "${install_mode}" != "chroot" -a "${install_mode}" != "stage4" ]; then
+    error "install_mode must be 'normal', 'chroot', or 'stage4'"
     fatal=1
   fi
   if [ -z "${chroot_dir}" ]; then
@@ -308,11 +301,13 @@ sanity_check_config() {
     warn "cron_daemon not set...using vixie-cron."
     cron_daemon="vixie-cron"
   fi
-#  Now handled by sanity_check_config_bootloader in each bootloader script file. 
+  
+  
 #  if [ -z "${bootloader}" ]; then
-#    warn "bootloader not set...using grub2"
-#    bootloader="grub2"
+#    warn "bootloader not set...using grub"
+#    bootloader="grub"
 #  fi
+
   if ! sanity_check_config_partition; then
     fatal=1
   fi

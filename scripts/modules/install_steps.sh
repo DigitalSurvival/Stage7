@@ -100,7 +100,7 @@ mount_local_partitions() {
   else
     rm /tmp/install.mount /tmp/install.umount /tmp/install.swapoff 2>/dev/null
     for mount in ${localmounts}; do
-      debug mount_local_partitions "Mount is ${mount}"
+      debug mount_local_partitions "mount is ${mount}"
       local devnode=$(echo ${mount} | cut -d ':' -f1)
       local type=$(echo ${mount} | cut -d ':' -f2)
       local mountpoint=$(echo ${mount} | cut -d ':' -f3)
@@ -325,16 +325,14 @@ install_bootloader() {
 	spawn_chroot "emerge --noreplace sys-boot/grub:0" || die "Could not emerge Grub-Legacy bootloader."
   elif [ "${bootloader}" = "lilo" ]; then
 	spawn_chroot "emerge sys-boot/lilo" || die "Could not emerge the LiLo bootloader."
-  elif [ "${bootloader}" = "grub2" ]; then
-    spawn_chroot "emerge sys-boot/grub:2" || die "Could not emerge the Grub2 bootloader."
   else
-	spawn_chroot "emerge ${bootloader}" || die "Could not emerge ${bootloader} bootloader."
+    spawn_chroot "emerge ${bootloader}" || die "Could not emerge the Grub2 bootloader."
   fi
 }
 
 configure_bootloader() {
   if [ "${bootloader}" = "none" ]; then
-    debug configure_bootloader "bootloader is 'none'...skipping configuration."
+    debug configure_bootloader "bootloader is 'none'...skipping configuration"
   else
     if $(isafunc configure_bootloader_${bootloader}); then
       configure_bootloader_${bootloader} || die "Could not configure bootloader ${bootloader}"
