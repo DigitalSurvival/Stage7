@@ -1,7 +1,7 @@
 
 ###ToDo
 - [ ] Write a package building script to auto-generate new releases.
-  1. Implement Stage7 script super tight compression for minimal bandwidth consumption (xz).
+  1. Implement Stage7 package script with super tight compression for minimal bandwidth consumption and maximum fun (xz).
 - [ ] Write end user instructions and documentation.
   1. Update the project's README page with accurate "how to get" and "how to use" information.
   2. Keep the example configuration files tidy after adding new features.
