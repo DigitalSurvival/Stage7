@@ -8,7 +8,7 @@ sanity_check_config_bootloader() {
 }
 
 # "grub" defaults to grub legacy. 
-configure_bootloader_grub-legacy() {
+configure_bootloader_grub_legacy() {
   echo -e "default 0\ntimeout 30\n" > ${chroot_dir}/boot/grub/grub.conf
   local boot_root="$(get_boot_and_root)"
   local boot="$(echo ${boot_root} | cut -d '|' -f1)"
@@ -49,8 +49,8 @@ configure_bootloader_grub-legacy() {
   fi
 }
 
-# Grub 2 has become the default bootloader.
-configure_bootloader_grub()	{
+# todo: grub2 has become the default bootloader.
+configure_bootloader_grub() {
 # BIOS/MBR or BIOS/GPT
 
 #UEFI/GPT
@@ -59,6 +59,5 @@ grub2-install --target=x86_64-efi
 
 # Give the user a choice to use lilo
 configure_bootloader_lilo() {
-
-
+echo -e "lilo selected"
 }
