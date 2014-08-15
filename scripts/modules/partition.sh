@@ -68,10 +68,13 @@ fdisk_command() {
   return $?
 }
 
-# Adding functionality for parted...
-parted_command()	{
-
-
+# todo: Adding functionality for parted...
+parted_command() {
+  local device=$1
+  local cmd=$2
+  
+  debug parted_command "Running parted command '${cmd}' on device ${device}"
+  spawn "echo -en '${cmd}\nw\n' | parted ${device}"
 }
 
 sanity_check_config_partition() {

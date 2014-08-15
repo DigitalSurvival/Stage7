@@ -192,10 +192,11 @@ set_root_password() {
     spawn_chroot "echo 'root:${root_password}' | chpasswd" || die "Could not set the root password."
   fi
 }
-
+# todo: testing
 set_hostname() {
 if [ -n "${hostname}" ]; then
 spawn_chroot "echo hostname=\"${hostname}\" > ${chroot_dir}/etc/conf.d/hostname" || die "Could not set system hostname."
+fi
 }
 
 set_timezone() {
@@ -211,8 +212,6 @@ set_timezone() {
 build_kernel() {
   if [ "${kernel_sources}" = "none" ]; then
     debug build_kernel "kernel_sources is 'none'...skipping kernel build."
-  elif 
-  
   else
     spawn_chroot "emerge ${kernel_sources}" || die "Could not emerge kernel sources."
     spawn_chroot "emerge genkernel" || die "Could not emerge genkernel."

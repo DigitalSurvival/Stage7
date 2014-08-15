@@ -26,19 +26,19 @@ usage() {
   cat <<EOF
 Usage:
   stage7 [-h|--help] [-d|--debug] [-v|--verbose] [-q|--quiet]
-             [-s|--sanity-check] [--version] <profile>
+             [-s|--sanity-check] [--version] <install_profile>
 
 Options:
-  -h|--help            Show this message and quit
-  -d|--debug           Output debugging messages
-  -q|--quiet           Only output fatal error messages
-  -v|--verbose         Be verbose (show external command output)
-  -s|--sanity-check    Sanity check install profile and exit
-  -c|--client <host>   Act as a client and connect to a Stage7d
-  --version            Print version and exit
+  -h|--help            Show this message and quit.
+  -d|--debug           Output debugging messages.
+  -q|--quiet           Only output fatal error messages.
+  -v|--verbose         Be verbose (show external command output).
+  -s|--sanity-check    Sanity check install profile and exit.
+  -c|--client <host>   Act as a client and connect to a Stage7d server.
+  --version            Print version and exit.
 
 Arguments:
-  profile              Path to an install profile
+  install_profile              Path to an install profile.
 EOF
 }
 
@@ -112,12 +112,12 @@ if [ -n "${server}" ]; then
 fi
 
 if [ -z "${profile}" ]; then
-  usage "You must specify a profile."
+  usage "You must specify an install profile."
   exit 1
 fi
 
 if [ ! -f "${profile}" ]; then
-  error "Specified profile does not exist!"
+  error "Specified install profile does not exist!"
   exit 1
 else
   . "${profile}"
