@@ -9,5 +9,5 @@
 # Removes Windows' index files
 **\Thumbs.db
 testing/
-
+packages/
 
