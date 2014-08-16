@@ -8,6 +8,8 @@
 
 # Removes Windows' index files
 **\Thumbs.db
+
+# Removes the package files, for now at least...
 testing/
 packages/
 
