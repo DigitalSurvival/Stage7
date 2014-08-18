@@ -68,7 +68,7 @@ setup_lvm() {
     spawn "lvcreate -L${size} -n${name} ${volgroup}" || die "Could not create logical volume '${name}' with size ${size} in volume group '${volgroup}'"
   done
 }
-
+#todo: add fat support for efi
 format_devices() {
   for device in ${format}; do
     local devnode=$(echo ${device} | cut -d: -f1)
@@ -78,7 +78,7 @@ format_devices() {
       swap)
         formatcmd="mkswap ${devnode}"
         ;;
-      ext2|ext3|ext4|xfs|btrfs)
+      ext2|ext3|ext4|xfs|btrfs|vfat)
         formatcmd="mkfs.${fs} ${devnode}"
         ;;
       reiserfs|reiserfs3)
@@ -94,6 +94,7 @@ format_devices() {
   done
 }
 
+#todo: add fat support for efi
 mount_local_partitions() {
   if [ -z "${localmounts}" ]; then
     warn "No local mounts specified. This is a bit unusual, but you're the boss..."
@@ -112,7 +113,7 @@ mount_local_partitions() {
           spawn "swapon ${devnode}" || warn "Could not activate swap ${devnode}"
           echo "${devnode}" >> /tmp/install.swapoff
           ;;
-        ext2|ext3|ext4|reiserfs|reiserfs3|xfs|btrfs)
+        ext2|ext3|ext4|reiserfs|reiserfs3|xfs|btrfs|vfat)
           echo "mount -t ${type} ${devnode} ${chroot_dir}${mountpoint} ${mountopts}" >> /tmp/install.mount
           echo "${chroot_dir}${mountpoint}" >> /tmp/install.umount
           ;;

@@ -7,7 +7,7 @@ HILITE='\033[36;01m'
 BRACKET='\033[34;01m'
 NORMAL='\033[0m'
 
-logfile=/tmp/install.log
+logfile=/tmp/stage7_Install.log
 
 debug() {
   local func=$1
@@ -48,10 +48,11 @@ warn() {
   log "Warning: ${msg}"
 }
 
+#todo: make sure new date command works properly.
 log() {
   local msg=$1
 
   if [ -n "${logfile}" -a -f "${logfile}" ]; then
-    echo "$(date): ${msg}" >> ${logfile} 2>/dev/null
+    echo "$(date '+%b %d, %Y %T - '): ${msg}" >> ${logfile} 2>/dev/null
   fi
 }

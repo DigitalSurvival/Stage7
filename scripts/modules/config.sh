@@ -1,9 +1,12 @@
 # $Id$
 
+#todo: implement <profile>
 install_mode() {
   local mode=$1
-
+  local profile=$2
+  
   install_mode="${mode}"
+  install_profile="${profile}"
 }
 
 part() {
@@ -106,6 +109,13 @@ bootloader_kernel_args() {
 
   bootloader_kernel_args="${kernel_args}"
 }
+
+#todo: implement GTP/MBR partition table layout support. Add to documentation.
+partition_table_layout() {
+  local table=$1
+   
+   partition_table_layout="${table}"
+  }
 
 logger() {
   local pkg=$1
@@ -257,10 +267,21 @@ sanity_check_config() {
 
   debug sanity_check_config "$(set | grep '^[a-z]')"
 
-  if [ -n "${install_mode}" -a "${install_mode}" != "normal" -a "${install_mode}" != "chroot" -a "${install_mode}" != "stage4" ]; then
-    error "install_mode must be 'normal', 'chroot', or 'stage4'"
+  if [ -n "${install_mode}" -a "${install_mode}" != "normal" -a "${install_mode}" != "chroot" -a "${install_mode}" != "stage4" -a "${install_mode}" != "stage7"]; then
+    error "install_mode must be 'normal', 'chroot', 'stage4', or 'stage7'"
     fatal=1
   fi
+
+  #todo: sanity check install profile  
+  if [ "${install_mode}" == "stage7" -a "${install_profile}" != "ds-desktop" -a "${install_profile}" != "ds-server" ]; then
+  error "install_profile must be 'ds-desktop', or 'ds-server'./" 
+  fi
+  
+  #todo: sanity check parition table layout
+  if [ -z "${partition_table_layout}" ]; then
+    warn "partition_table_layout not set...defaulting to MBR."
+  fi
+  
   if [ -z "${chroot_dir}" ]; then
     error "chroot_dir is not defined (this can only happen if you set it to a blank string)."
     fatal=1

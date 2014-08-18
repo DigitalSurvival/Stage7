@@ -20,6 +20,10 @@ rootpw Ex@mP1eP@$$w0rd
 # If Grub 2 is used and EFI is desired, you'll need to specify a FAT32 formatted /boot/efi directory. 
 bootloader grub
 
+# Specifies if you want GPT (newer and recommended) or MBR partition table layout.
+# If you have old hardware or if you don't know what you have you should use MBR.
+partition_table_layout MBR
+
 # Specifies if how you want your partition layout to look after the install.
 part hda 1 83 256M
 part hda 2 82 40G
@@ -35,10 +39,10 @@ mountfs /dev/hda1 ext4 /boot
 mountfs /dev/hda2 swap
 mountfs /dev/hda3 ext4 / noatime
 
-# 
+# Configures the network interfaces.
 net eth0 dhcp
 
-# If you want to 
+# If you want to mount a network drive you would define it like this.
 #netmount 192.168.0.12:/usr/portage nfs /usr/portage ro
 
 # Still need to set the correct chost variable

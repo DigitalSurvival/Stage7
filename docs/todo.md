@@ -1,7 +1,7 @@
 ###ToDo###
 
 - [x] ~~Write a package building script to auto-generate new releases.~~
-  ~~1. Implement Stage7 package script with super tight compression for minimal bandwidth consumption and maximum fun (xz).~~ *Done!*
+  1. ~~Implement Stage7 package script with super tight compression for minimal bandwidth consumption and maximum fun (xz).~~ *Done!*
 - [x] ~~Write a "getStage7" script to pull down Stage7 package files from the web and completely configure the project.~~ *Done!*
 - [ ] Write end user instructions and documentation.
   1. Update the project's README page with accurate ~~"how to get"~~ and "how to use" information.
@@ -18,7 +18,7 @@
   7. Add hardened and vanilla kernel support.
   8. Verify both x86 and AMD64 architectures are operational.
   9. Add predictable network interface names support.
-  ~~10. Add hostname support.~~ *Done!*
+  10. ~~Add hostname support.~~ *Done!*
 - [ ] Add extended functionality to Stage7.
   1. Add automatic X server install support as a Stage7 profile.
   2. Add automatic OpenBox install/configure support as a Stage7 profile.
