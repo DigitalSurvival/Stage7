@@ -23,8 +23,10 @@ It's not done yet, so you'll have to wait until then before you can use it.
 **What are the advantages of Gentoo-based Linux distributions?**
 
 Actually there's quite a few advantages.
- #Speed. From the core Gentoo Linux is build for speed. It's speedy because it provides the end user with the option to leave out much of the baggage that bloats up other Linux distributions. There is a time trade off, however, because the end user has to compile their own packages.
- #Flexibility. By default Gentoo Linux is arguably the most flexible Linux distribution available to the masses. It is capable of adapting to almost every desktop environment, has thousands of packages in the Portage tree, and has the most frequent releases.
+ #Efficiency: From the core Gentoo Linux is build for speed. It is quick because the "USE" flag system provides the end user with the option to leave out much of the baggage that bloats up other Linux distributions. This enables the end user to create extremely "bare-bone" installations by removing unneeded functions from packages; smaller binaries load faster and use less memory!
+ #Flexibility: By default Gentoo-based Linux distributions are the most flexible Linux distributions available! Gentoo is capable of using almost every desktop environment available (Gnome, KDE, XFCE, OpenBox, etc). With thousands of packages in the Portage tree, and frequent "rolling" releases, Gentoo can be useful in most every situation. 
+ #Scalability: Due to its source-based approach to software management, Gentoo is relatively well suited to deploy on tiny embedded systems right up to large cluster machines. 
+ #Security: Because of the uniqueness of the Portage system and the ability to build packages with or without certain features, Gentoo can be made more secure than other binary-based Linux distributions. Less features means less opportunities for security holes and bugs.
 
 **How can you help?**
 * Create some awesome graphics using the text "Stage7" in an artistic way. Check out the fonts in the graphics/fonts folder for some ideas...
