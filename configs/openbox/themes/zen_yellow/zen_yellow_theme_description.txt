@@ -1,0 +1,4 @@
+zen yellow openbox theme
+inspired on zen yellow gtk theme
+
+http://box-look.org/content/show.php/zen+yellow?content=60765

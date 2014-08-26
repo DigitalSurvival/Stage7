@@ -1,0 +1,5 @@
+simple gold ob theme
+used with gtk zen gold flavors (unreleased)
+and icon theme Gion
+
+http://box-look.org/content/show.php/gold?content=60766

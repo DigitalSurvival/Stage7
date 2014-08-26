@@ -22,6 +22,8 @@
 - [ ] Add extended functionality to Stage7.
   1. Add automatic X server install support as a Stage7 profile.
   2. Add automatic OpenBox install/configure support as a Stage7 profile.
+    - [ ] Include themes support for OpenBox.
+	- [ ] Include power management support.
   3. Start Digital Survival server platform functionality after Stage7 desktop functionality is complete.
 - [ ] Digital Survival integration
   1. Digital Survival Package Mirror overlay support.
