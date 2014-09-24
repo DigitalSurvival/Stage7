@@ -1,11 +1,19 @@
 Stage7
 ======
 
-The goal of Stage7 is to provide an "automagic" installer for Gentoo-based Linux distrubtions. For now Stage7's installer base full size computers, but in the future support may be added for notebooks. Many automatic install scripts have been made in the past for Gentoo, however none of them have been maintained. Stage7 is an attempt to create an easy to use, continually maintained installer.
+The goal of Stage7 is to provide a perfect "automagic" installer for Gentoo-based Linux distrubtions. For now Stage7's installer works on full size computers, but in the future support may be added for notebooks. In the past many automatic install scripts have been made for Gentoo, however none of them have been maintained. Stage7 is an attempt to create an easy to use, *continually maintained* installer.
 
 ![Stage7 Graphic](http://bit.ly/1m6NG9H "Stage7 Banner Graphic")
 
-Why Stage7? In the Bible, the number 7 is the number of fullness, completion, and perfection (Gen 2:2; Ex 21:2; Rev 3:1). In the Gentoo Linux community the term "stage" followed by a number refers to how completed a Gentoo base system is. Stage7 is a hope to provide a freshly-compiled, completely-configured Gentoo Linux system from the start. You should be able to unattend your Gentoo-based Linux install.
+**Why Stage7?**
+
+In the Bible, the number 7 is the number of fullness, completion, and perfection (Gen 2:2; Ex 21:2; Rev 3:1). In the Gentoo Linux community the term "stage" followed by a number refers to how complete a Gentoo base system is. Stage7 is a hope to provide an easily configured, freshly-compiled Gentoo Linux system from the software sources (via Portage). 
+
+**What are the advantages of using Stage7**
+
+Just like other distributions, you should have the freedom to "unattend" your Gentoo-based Linux install. One of the advantages is time savings. Time is saved because the user does not have to be at the PC for each step in the install process, traditionally this hasn't been the case.
+
+Another advantage is Stage7 *makes it easy* to install Gentoo. One doesn't have to know much about the command line in order to benefit from the power of the best OS ever. Gentoo is a great challenge and a fine learning experience to setup by hand, however there are advantages and disadvanages to by-hand install method. Stage7 provides end users with a second option: an automated install.
 
 **How do you get Stage7?**
 
