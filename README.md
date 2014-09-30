@@ -1,19 +1,22 @@
 Stage7
 ======
 
-The goal of Stage7 is to provide a perfect "automagic" installer for Gentoo-based Linux distrubtions. For now Stage7's installer works on full size computers, but in the future support may be added for notebooks. In the past many automatic install scripts have been made for Gentoo, however none of them have been maintained. Stage7 is an attempt to create an easy to use, *continually maintained* installer.
+The goal of Stage7 is to provide a perfect "automagic" installer for Gentoo-based Linux distributions. For now Stage7's installer works on full size computers, but in the future support may be added for notebooks and other platforms. Many attempts at a way to automatically install Gentoo have, however none of them have been maintained. Stage7 is an attempt to create an easy to use, *continually maintained* installer.
 
 ![Stage7 Graphic](http://bit.ly/1m6NG9H "Stage7 Banner Graphic")
 
 **Why Stage7?**
 
-In the Bible, the number 7 is the number of fullness, completion, and perfection (Gen 2:2; Ex 21:2; Rev 3:1). In the Gentoo Linux community the term "stage" followed by a number refers to how complete a Gentoo base system is. Stage7 is a hope to provide an easily configured, freshly-compiled Gentoo Linux system from the software sources (via Portage). 
+In the Bible, the number 7 is the number of fullness, completion, and perfection (Gen 2:2; Ex 21:2; Rev 3:1). In the Gentoo Linux community the term "stage" followed by a number refers to how complete a Gentoo base system is. Stage7 provides an easily configured way to
+ #generate a freshly-compiled Gentoo Linux system from the original software sources (via a stage3 and Portage)
+ #unpack a stage4 tarball.
+ #generate a stage7 "perfect" install.
 
 **What are the advantages of using Stage7**
 
 Just like other distributions, you should have the freedom to "unattend" your Gentoo-based Linux install. One of the advantages is time savings. Time is saved because the user does not have to be at the PC for each step in the install process, traditionally this hasn't been the case.
 
-Another advantage is Stage7 *makes it easy* to install Gentoo. One doesn't have to know much about the command line in order to benefit from the power of the best OS ever. Gentoo is a great challenge and a fine learning experience to setup by hand, however there are advantages and disadvanages to by-hand install method. Stage7 provides end users with a second option: an automated install.
+Another advantage is Stage7 *makes it easy* to install Gentoo. One doesn't have to know much about the command line in order to benefit from the power of the best OS ever. Gentoo is a great challenge and a fine learning experience to setup by hand, however there are advantages and disadvantages to by-hand install method. Stage7 provides end users with a second option: an automated install.
 
 **How do you get Stage7?**
 
@@ -23,6 +26,8 @@ You can download Stage7 by running this command on your favorite Linux distribut
 Make the script executable by running this command:
 > chmod +x getStage7.sh
 
+Then simply run the script:
+> ./getStage7.sh
 
 **How do you use Stage7?** 
 
@@ -32,7 +37,7 @@ It's not done yet, so you'll have to wait until then before you can use it.
 
 Actually there's quite a few advantages.
  #Efficiency: From the core Gentoo Linux is build for speed. It is quick because the "USE" flag system provides the end user with the option to leave out much of the baggage that bloats up other Linux distributions. This enables the end user to create extremely "bare-bone" installations by removing unneeded functions from packages; smaller binaries load faster and use less memory!
- #Flexibility: By default Gentoo-based Linux distributions are the most flexible Linux distributions available! Gentoo is capable of using almost every desktop environment available (Gnome, KDE, XFCE, OpenBox, etc). With thousands of packages in the Portage tree, and frequent "rolling" releases, Gentoo can be useful in most every situation. 
+ #Flexibility: By default Gentoo-based Linux distributions are the most flexible Linux distributions available! Gentoo is capable of using almost every desktop environment available (Gnome, KDE, XFCE, OpenBox, etc.). With thousands of packages in the Portage tree, and frequent "rolling" releases, Gentoo can be useful in most every situation. 
  #Scalability: Due to its source-based approach to software management, Gentoo is relatively well suited to deploy on tiny embedded systems right up to large cluster machines. 
  #Security: Because of the uniqueness of the Portage system and the ability to build packages with or without certain features, Gentoo can be made more secure than other binary-based Linux distributions. Less features means less opportunities for security holes and bugs.
 

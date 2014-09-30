@@ -173,10 +173,10 @@ prepare_chroot() {
 install_portage_tree() {
   debug install_portage_tree "tree_type is ${tree_type}"
   if [ "${tree_type}" = "sync" ]; then
-    spawn_chroot "emerge --sync" || die "Could not sync the portage tree."
+    spawn_chroot "emerge --sync" || die "Could not sync the Portage tree."
   elif [ "${tree_type}" = "snapshot" ]; then
-    fetch "${portage_snapshot_uri}" "${chroot_dir}/$(get_filename_from_uri ${portage_snapshot_uri})" || die "Could not fetch a portage snapshot."
-    unpack_tarball "${chroot_dir}/$(get_filename_from_uri ${portage_snapshot_uri})" "${chroot_dir}/usr" || die "Could not unpack the portage snapshot."
+    fetch "${portage_snapshot_uri}" "${chroot_dir}/$(get_filename_from_uri ${portage_snapshot_uri})" || die "Could not fetch a Portage snapshot."
+    unpack_tarball "${chroot_dir}/$(get_filename_from_uri ${portage_snapshot_uri})" "${chroot_dir}/usr" || die "Could not unpack the Portage snapshot."
   elif [ "${tree_type}" = "webrsync" ]; then
     spawn_chroot "emerge-webrsync" || die "Could not emerge-webrsync."
   elif [ "${tree_type}" = "none" ]; then
@@ -204,7 +204,7 @@ set_timezone() {
   [ -e "${chroot_dir}/etc/localtime" ] && spawn "rm ${chroot_dir}/etc/localtime" || die "Could not remove existing /etc/localtime"
   spawn "cp ${chroot_dir}/usr/share/zoneinfo/${timezone} ${chroot_dir}/etc/localtime" || die "Could not set the timezone."
   if [ -e "${chroot_dir}/etc/conf.d/clock" ]; then
-    spawn "/bin/sed -i 's:#TIMEZONE=\"Factory\":TIMEZONE=\"${timezone}\":' ${chroot_dir}/etc/conf.d/clock" || die "Could not adjust TIMEZONE config in /etc/conf.d/clock"
+    spawn "/bin/sed -i 's:#TIMEZONE=\"Factory\":TIMEZONE=\"${timezone}\":' ${chroot_dir}/etc/conf.d/clock" || die "Could not adjust TIMEZONE configuration found at in /etc/conf.d/clock"
   else
     echo "${timezone}" > "${chroot_dir}/etc/timezone"
   fi
@@ -227,7 +227,7 @@ build_kernel() {
 
 install_logging_daemon() {
   if [ "${logging_daemon}" = "none" ]; then
-    debug install_logging_daemon "logging_daemon is 'none'...skipping"
+    debug install_logging_daemon "logging_daemon is 'none'...skipping."
   else
     spawn_chroot "emerge ${logging_daemon}" || die "Could not emerge logging daemon."
     spawn_chroot "rc-update add ${logging_daemon} default" || die "Could not add logging daemon to default runlevel."
@@ -322,7 +322,7 @@ install_bootloader() {
   if [ "${bootloader}" = "none" ]; then
     debug install_bootloader "bootloader is 'none'...skipping"
   elif [ "${bootloader}" = "grub-legacy" ]; then
-	spawn_chroot "emerge --noreplace sys-boot/grub:0" || die "Could not emerge Grub-Legacy bootloader."
+	spawn_chroot "emerge --noreplace sys-boot/grub:0" || die "Could not emerge Grub legacy bootloader."
   elif [ "${bootloader}" = "lilo" ]; then
 	spawn_chroot "emerge sys-boot/lilo" || die "Could not emerge the LiLo bootloader."
   else
@@ -332,7 +332,7 @@ install_bootloader() {
 
 configure_bootloader() {
   if [ "${bootloader}" = "none" ]; then
-    debug configure_bootloader "bootloader is 'none'...skipping configuration"
+    debug configure_bootloader "bootloader is 'none'...skipping configuration."
   else
     if $(isafunc configure_bootloader_${bootloader}); then
       configure_bootloader_${bootloader} || die "Could not configure bootloader ${bootloader}"
@@ -352,7 +352,7 @@ install_extra_packages() {
 
 run_post_install_script() {
   if [ -n "${post_install_script_uri}" ]; then
-    fetch "${post_install_script_uri}" "${chroot_dir}/var/tmp/post_install_script" || die "Could not fetch post-install script"
+    fetch "${post_install_script_uri}" "${chroot_dir}/var/tmp/post_install_script" || die "Could not fetch post-install script."
     chmod +x "${chroot_dir}/var/tmp/post_install_script"
     spawn_chroot "/var/tmp/post_install_script" || die "Error running post-install script."
     spawn "rm ${chroot_dir}/var/tmp/post_install_script"
@@ -367,7 +367,7 @@ finishing_cleanup() {
   spawn "cp ${logfile} ${chroot_dir}/root/$(basename ${logfile})" || warn "Could not copy install logfile into chroot."
   if [ -e /tmp/install.umount ]; then
     for mnt in $(sort -r /tmp/install.umount); do
-      spawn "umount ${mnt}" || warn "could not unmount ${mnt}"
+      spawn "umount ${mnt}" || warn "Could not unmount ${mnt}"
       rm /tmp/install.umount 2>/dev/null
     done
   fi

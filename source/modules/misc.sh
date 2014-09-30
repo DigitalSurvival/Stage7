@@ -18,10 +18,20 @@ detect_disks() {
   done
 }
 
+#todo: check for more than one NIC.
 get_mac_address() {
-  /sbin/ifconfig | grep HWaddr | head -n 1 | sed -e 's:^.*HWaddr ::' -e 's: .*$::'
+  /bin/ifconfig | grep ether | head -n 1 | sed -e 's:^.*ether ::' -e 's: .*$::'
 }
 
+#todo: implement the getting of IPv4 addresses for web interface plans.
+get_ipv4_address() {
+  /bin/ifconfig | grep inet | head -n 1 | sed -e 's:^.*inet ::' -e 's: .*$::'
+}
+
+#todo: implement the getting of IPv6 addresses for web interface plans.
+get_ipv6_address () {
+  /bin/ifconfig | grep inet6 | head -n 1 | sed -e 's:^.*inet6 ::' -e 's: .*$::'
+}
 unpack_tarball() {
   local file=$1
   local dest=$2

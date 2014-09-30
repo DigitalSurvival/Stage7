@@ -25,18 +25,21 @@
     - [ ] Include themes support for OpenBox.
 	- [ ] Include power management support.
   3. Start Digital Survival server platform functionality after Stage7 desktop functionality is complete.
+  4. Create Stage7 recovery disk from which to install or capture an image/disk.
+  5. Add stage4 backup support to the Stage7 recovery disk.
 - [ ] Digital Survival integration
-  1. Digital Survival Package Mirror overlay support.
+  1. Digital Survival Package Mirror overlay support (via layman and Github).
   2. Utilize Gentoo's webapp-config program for web applications such as OwnCloud, Wordpress, MediaWiki, ChurchTools, etc.
 - [ ] Create ncurses install menu for terminals
-  1. Research ncurses. *Started*
+  1. Research ncurses. *Started...*
 - [ ] Create X server install menu for anything X server dependant
-  1. Research the options on X server interfaces. Find something with minimal dependencies.
+  1. ~~Research the options on X server interfaces. Find something with minimal dependencies.~~ *Done!*
 - [ ] Make importing of preconfigured scripts easy for end users.
   1. Integrate into ncurses menu and/or X server menu.
-- [ ] Possible, but not probable, features to implement
-  1. Dual boot support using os-prober other operating systems. Mainly Windows XP, Vista, 7, 8, and 8.1.
+- [ ] Possible features to implement after the base gets established.
+  1. Dual boot support using os-prober other operating systems. Mainly Windows XP, Vista, 7, 8, and 8.1. Integrate this into the GUIs.
   2. Add Laptop/Notebook low power support.
   3. Add ARM microprocessor architecture support.
   4. Add support for a Steam profile to profile's list. This would definitely be a step beyond OpenBox...
+  5. Add support for a HTTP interface for remote installs. This would eventually replace the need for a Python GUI. It would display the LAN IP in a web browser so the user could write it down and connect from another PC on the LAN. It would be ground breaking to create a live medium (USB, CD, DVD) that would handle all this.
 

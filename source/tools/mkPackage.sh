@@ -1,6 +1,10 @@
 #!/bin/bash
 
-# This script automatically generates downloadable packages for Stage7.
+# Written by Matthew Marchese for the Stage7 project.
+# Site: http://www.DigitalSurvival.us/Stage7
+# Source: https://github.com/DigitalSurvival/Stage7
+
+# Description: This script automatically generates downloadable packages for Stage7.
 
 # Choose the kind of compressed packages to be generated
 create_bz2="yes"
