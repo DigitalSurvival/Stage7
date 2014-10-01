@@ -97,7 +97,7 @@ format_devices() {
 #todo: add fat support for efi
 mount_local_partitions() {
   if [ -z "${localmounts}" ]; then
-    warn "No local mounts specified. This is a bit unusual, but you're the boss..."
+    warn "There are no local mounts specified. This is a bit unusual, but you're the boss..."
   else
     rm /tmp/install.mount /tmp/install.umount /tmp/install.swapoff 2>/dev/null
     for mount in ${localmounts}; do
@@ -148,7 +148,7 @@ mount_network_shares() {
 }
 
 unpack_stage_tarball() {
-  fetch "${stage_uri}" "${chroot_dir}/$(get_filename_from_uri ${stage_uri})" || die "Could not fetch a stage tarball."
+  fetch "${stage_uri}" "${chroot_dir}/$(get_filename_from_uri ${stage_uri})" || die "Could not fetch a stage tarball from: ${stage_uri}"
   unpack_tarball "${chroot_dir}/$(get_filename_from_uri ${stage_uri})" "${chroot_dir}" 1 || die "Could not unpack the stage tarball."
 }
 
@@ -161,6 +161,7 @@ prepare_chroot() {
   debug prepare_chroot "bind-mounting /dev"
   spawn "mount -o bind /dev ${chroot_dir}/dev" || die "Could not bind-mount /dev"
   echo "${chroot_dir}/dev" >> /tmp/install.umount
+  #todo: check this against 3.x kernels.
   if [ "$(uname -r | cut -d. -f 2)" = "6" ]; then
     debug prepare_chroot "bind-mounting /sys"
     spawn "mount -o bind /sys ${chroot_dir}/sys" || die "Could not bind-mount /sys"
@@ -188,15 +189,15 @@ install_portage_tree() {
 
 set_root_password() {
   if [ -n "${root_password_hash}" ]; then
-    spawn_chroot "echo 'root:${root_password_hash}' | chpasswd -e" || die "Could not set root password."
+    spawn_chroot "echo 'root:${root_password_hash}' | chpasswd -e" || die "Could not set the system's root password."
   elif [ -n "${root_password}" ]; then
-    spawn_chroot "echo 'root:${root_password}' | chpasswd" || die "Could not set the root password."
+    spawn_chroot "echo 'root:${root_password}' | chpasswd" || die "Could not set the system's root password."
   fi
 }
 # todo: testing
 set_hostname() {
 if [ -n "${hostname}" ]; then
-spawn_chroot "echo hostname=\"${hostname}\" > ${chroot_dir}/etc/conf.d/hostname" || die "Could not set system hostname."
+spawn_chroot "echo hostname=\"${hostname}\" > ${chroot_dir}/etc/conf.d/hostname" || die "Could not set \"${hostname}\" as the system hostname."
 fi
 }
 
@@ -214,7 +215,7 @@ build_kernel() {
   if [ "${kernel_sources}" = "none" ]; then
     debug build_kernel "kernel_sources is 'none'...skipping kernel build."
   else
-    spawn_chroot "emerge ${kernel_sources}" || die "Could not emerge kernel sources."
+    spawn_chroot "emerge ${kernel_sources}" || die "Could not emerge \"${kernel_sources}\" kernel sources."
     spawn_chroot "emerge genkernel" || die "Could not emerge genkernel."
     if [ -n "${kernel_config_uri}" ]; then
       fetch "${kernel_config_uri}" "${chroot_dir}/tmp/kconfig" || die "Could not fetch kernel a config."
@@ -229,7 +230,7 @@ install_logging_daemon() {
   if [ "${logging_daemon}" = "none" ]; then
     debug install_logging_daemon "logging_daemon is 'none'...skipping."
   else
-    spawn_chroot "emerge ${logging_daemon}" || die "Could not emerge logging daemon."
+    spawn_chroot "emerge ${logging_daemon}" || die "Could not emerge \" ${logging_daemon}\"logging daemon."
     spawn_chroot "rc-update add ${logging_daemon} default" || die "Could not add logging daemon to default runlevel."
   fi
 }

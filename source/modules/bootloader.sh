@@ -5,14 +5,16 @@ map_device_to_grub_device() {
 
   if [ ! -f "${chroot_dir}/boot/grub/device.map" ]; then
     debug map_device_to_grub_device "device.map doesn't exist...creating"
-    spawn_chroot "echo quit | /sbin/grub --batch --no-floppy --device-map=/boot/grub/device.map >/dev/null 2>&1" || die "could not create grub device map"
+    spawn_chroot "echo quit | /sbin/grub --batch --no-floppy --device-map=/boot/grub/device.map >/dev/null 2>&1" || die "Could not create Grub legacy device map."
   fi
   grep "${device}\$" ${chroot_dir}/boot/grub/device.map | awk '{ print $1; }' | sed -e 's:[()]::g'
 }
 
+#todo: Test for kernels named vmlinuz in addition to "*kernel*"
 get_kernel_and_initrd() {
   local kernels=""
-  for kernel in $(ls -1t --color=no ${chroot_dir}/boot/kernel-*); do
+  
+  for kernel in $(ls -1t --color=no ${ckernelhroot_dir}/boot/*kernel*); do
     kernel="$(echo ${kernel} | sed -e 's:^.\+/kernel-:kernel-:')"
     if [ -e "${chroot_dir}/boot/$(echo ${kernel} | sed -e 's:kernel-:initrd-:')" ]; then
       local initrd="$(echo ${kernel} | sed -e 's:kernel-:initrd-:')"
@@ -25,13 +27,16 @@ get_kernel_and_initrd() {
       kernels="${kernel}|${initrd}"
     fi
   done
+  
+  
   echo "${kernels}"
 }
 
 get_boot_and_root() {
   for mount in ${localmounts}; do
     local devnode=$(echo ${mount} | cut -d ':' -f1)
-    local mountpoint=$(echo ${mount} | cut -d ':' -f3)
+    local mountpoint=$(echo ${
+	} | cut -d ':' -f3)
     if [ "${mountpoint}" = "/" ]; then
       local root="${devnode}"
     elif [ "${mountpoint}" = "/boot" -o "${mountpoint}" = "/boot/" ]; then

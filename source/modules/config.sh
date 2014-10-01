@@ -201,6 +201,12 @@ timezone() {
   timezone="${tz}"
 }
 
+hostname() {
+  local hn=$1
+
+  hostname="${hn}"
+}
+
 rcadd() {
   local service=$1
   local runlevel=$2
@@ -267,17 +273,17 @@ sanity_check_config() {
 
   debug sanity_check_config "$(set | grep '^[a-z]')"
 
-  if [ -n "${install_mode}" -a "${install_mode}" != "normal" -a "${install_mode}" != "chroot" -a "${install_mode}" != "stage4" -a "${install_mode}" != "stage7"]; then
-    error "install_mode must be 'normal', 'chroot', 'stage4', or 'stage7'"
+  if [ -n "${install_mode}" -a "${install_mode}" != "normal" -a "${install_mode}" != "chroot" -a "${install_mode}" != "stage4" -a "${install_mode}" != "stage7" ]; then
+    error "install_mode must be set to 'normal', 'chroot', 'stage4', or 'stage7'"
     fatal=1
   fi
 
   #todo: sanity check install profile  
   if [ "${install_mode}" == "stage7" -a "${install_profile}" != "ds-desktop" -a "${install_profile}" != "ds-server" ]; then
-  error "install_profile must be 'ds-desktop', or 'ds-server'./" 
+  error "install_profile must be either 'ds-desktop', or 'ds-server' if install_mode is 'stage7'." 
   fi
   
-  #todo: sanity check parition table layout
+  #todo: sanity check partition table layout
   if [ -z "${partition_table_layout}" ]; then
     warn "partition_table_layout not set...defaulting to MBR."
   fi
