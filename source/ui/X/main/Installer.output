@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "C:/Users/M/Documents/GitHub/Stage7/source/ui/X/main/Installer.py", line 410, in <module>
+    vp_start_gui()
+  File "C:/Users/M/Documents/GitHub/Stage7/source/ui/X/main/Installer.py", line 29, in vp_start_gui
+    w = Stage7_Installer_GUI (root)
+  File "C:/Users/M/Documents/GitHub/Stage7/source/ui/X/main/Installer.py", line 103, in __init__
+    command=Installer_support.exit(),
+TypeError: exit() missing 1 required positional argument: 'p1'
