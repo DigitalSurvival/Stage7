@@ -1,5 +1,6 @@
 # $Id$
 
+#Define pretty terminal colors:
 GOOD='\033[32;01m'
 WARN='\033[33;01m'
 BAD='\033[31;01m'

@@ -1,48 +1,39 @@
-#!/bin/bash
-
-# Created by Matthew Marchese, 2-28-2014
-# This is free software. Feel free use, modify, or redistribute it as needed.
-# It is my goal for the script be helpful to you.
-# If you like the direction of my thinking, please visit my website
-# http://www.digitalsurvival.us
-# If you really like me, please donate to this cause.
-
-# Instructions:
-# TODO
-# You can either pass the hostname as an argument to this script or you can change
-# the system's hostname using hostname command. Example: hostname NewHostname
-# 
-# You will also need to change the root password for the new system.
-# TODO 
-
-#TODO Check to see if there is a newer version of the Digital Survival Gentoo installer script set. 
-
-echo 
-echo "You are running version Digital Survival's Gentoo Install Script for the AMD64 platform."
-echo "If you need to stop the script press ctrl+c"
-echo 
-
 # $Id$
+# Created by Maffblaster, October 1st, 2014
+# This is free software. Feel free use, modify, or redistribute it as needed.
+# It is my goal for it to be helpful to you!
+
+# If you have questions Stage7:
+# http://www.digitalsurvival.us/Stage7
+# To request improvements or report issues:
+# https://github.com/DigitalSurvival/Stage7/issues/new
+# If you really, really like it please donate time, effort, or money to Digital Survival: 
+# http://www.digitalsurvival.us/ways_to_help.html
+
+# Example Description:
+# This install profile is an example of what a generic AMD64 server configuration could look like.
+
+hostname Stage7_Demo
 
 stage_uri https://sourceforge.net/p/dsgentoo/code/ci/master/tree/stages/amd64/stage3-amd64-20140227.tar.bz2?format=raw
 
 tree_type snapshot https://sourceforge.net/p/dsgentoo/code/ci/master/tree/snapshots/portage-20140302.tar.bz2?format=raw
 
-rootpw password
-# "grub" now defaults to grub 2.
+rootpw stage7
+
 bootloader grub
 
 part hda 1 83 256M
 part hda 2 82 3G
 part hda 3 83 +
 
-format /dev/sda1 ext4
-format /dev/sda2 swap
-format /dev/sda3 ext4
+format /dev/hda1 ext4
+format /dev/hda2 swap
+format /dev/hda3 ext4
 
-mountfs /dev/sda1 ext4 /boot
-mountfs /dev/sda2 swap
-mountfs /dev/sda3 ext4 / noatime
+mountfs /dev/hda1 ext4 /boot
+mountfs /dev/hda2 swap
+mountfs /dev/hda3 ext4 / noatime
 
 net eth0 dhcp
 
@@ -58,3 +49,4 @@ USE="-X -gtk -gnome -kde -qt"
 EOF
 
   echo "portdbapi.auxdbmodule = cache.metadata_overlay.database" > ${chroot_dir}/etc/portage/modules
+}

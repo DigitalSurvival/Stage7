@@ -1,6 +1,8 @@
 # $Id$
 # This is an example of a profile that could be used for a x86 server.
 
+#todo: show grub2 GPT configuration
+
 # Add an example link to a stage3 file.
 stage_uri https://sourceforge.net/p/dsgentoo/code/ci/master/tree/stages/x86/stage3-i686-20140225.tar.bz2?format=raw
 
@@ -11,7 +13,7 @@ tree_type snapshot https://sourceforge.net/p/dsgentoo/code/ci/master/tree/snapsh
 install_mode normal
 
 # Set the hostname for your new system.
-hostname ExampleBox
+hostname Stage7_Demo
 
 # Sets the root password. For security purposes you MUST specify a root password.
 rootpw Ex@mP1eP@$$w0rd
@@ -50,7 +52,7 @@ net eth0 dhcp
 post_install_portage_tree() {
   cat > ${chroot_dir}/etc/make.conf <<EOF
 CHOST="i686-pc-linux-gnu"
-CFLAGS="-O2 -march=k8 -pipe"
+CFLAGS="-O2 -march=native -pipe"
 CXXFLAGS="\${CFLAGS}"
 USE="-X -gtk -gnome -kde -qt"
 EOF
