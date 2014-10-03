@@ -1,8 +1,8 @@
 #!/bin/sh
 # $Id$
 
-# Constants
-VERSION=0.1.0
+# Program variables
+VERSION=0.1.1
 
 # Options variables
 debug=0

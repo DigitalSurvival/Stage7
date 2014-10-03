@@ -39,20 +39,32 @@ install_mode — Choose the install mode and profile.
 		ds-server  — Installs a headless server, and configures your system with 
 					 the Digital Survival feature set.
 	
-part — Creates a partition.
+fpart — Creates a partition using fdisk.
 
   Usage:
-    part <drive> <minor> <type> [size]
+    fpart <drive> <minor> <type> [size]
 
   Parameters:
     drive — the drive to add this partition (such as hda, sdb, etc.)
-    minor — the partition number. These should be in order
+    minor — the partition number. These should be in order.
     type  — the partition type used in fdisk (such as 82 or 83) or "extended".
     size  — the size of the partition (such as 32MB or 15GB, whole numbers
             only), '+' for remaining space, or 'n%' for percentage of remaining
             (these should only be used after all specific partition sizes are
             specified), leave blank for "extended".
 
+			
+part — Creates a partition using parted.
+
+  Usage:
+    part <drive> <minor> <type> [size]
+
+  Parameters:
+    drive — the drive to add this partition (such as hda, sdb, etc.)
+    minor — the partition number. These should be in order.
+    type  — the partition type used in parted (such as ) or "extended".
+    size  — the size of the partition (such as 32MB or 15GB, whole numbers
+            only), '100%' for remaining space.			
 
 mdraid — Creates a md raid array.
 
@@ -93,7 +105,7 @@ format — Formats a partition.
 
   Parameters:
     device — the device to format (such as /dev/hda2 or /dev/sdb4).
-    fs     — the filesystem to use (such as ext2, ext3, or swap).
+    fs     — the filesystem to use (such as ext2, ext3, btrfs, or swap).
 
 
 mountfs — Mounts a filesystem.
@@ -106,7 +118,7 @@ mountfs — Mounts a filesystem.
     type       — filesystem of device (use auto if you're not sure).
     mountpoint — the directory to mount the filesystem.
     mountopts  — additional options to use when mounting.
-
+	
 
 netmount — Mounts a network filesystem.
 

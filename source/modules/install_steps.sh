@@ -13,6 +13,7 @@ run_pre_install_script() {
   fi
 }
 
+#todo: Investigate this function when adding parted support.
 partition() {
   for device in $(set | grep '^partitions_' | cut -d= -f1 | sed -e 's:^partitions_::'); do
     debug partition "device is ${device}"
@@ -68,7 +69,7 @@ setup_lvm() {
     spawn "lvcreate -L${size} -n${name} ${volgroup}" || die "Could not create logical volume '${name}' with size ${size} in volume group '${volgroup}'"
   done
 }
-#todo: add fat support for efi
+#todo: add fat support for efi, FAT, and NTFS
 format_devices() {
   for device in ${format}; do
     local devnode=$(echo ${device} | cut -d: -f1)
@@ -78,12 +79,15 @@ format_devices() {
       swap)
         formatcmd="mkswap ${devnode}"
         ;;
-      ext2|ext3|ext4|xfs|btrfs|vfat)
+      ext2|ext3|ext4|xfs|btrfs|ntfs|vfat)
         formatcmd="mkfs.${fs} ${devnode}"
         ;;
       reiserfs|reiserfs3)
         formatcmd="mkreiserfs -q ${devnode}"
         ;;
+	  efi)
+	    formatcmd="mkfs.vfat -s2 -F32 ${devnode}"
+		;;
       *)
         formatcmd=""
         warn "Don't know how to format ${devnode} as ${fs}"
@@ -94,10 +98,10 @@ format_devices() {
   done
 }
 
-#todo: add fat support for efi
+#todo: add fat support for efi, add ntfs support
 mount_local_partitions() {
   if [ -z "${localmounts}" ]; then
-    warn "There are no local mounts specified. This is a bit unusual, but you're the boss..."
+    warn "There are no local mounts specified. This is a bit unusual, but you da' boss..."
   else
     rm /tmp/install.mount /tmp/install.umount /tmp/install.swapoff 2>/dev/null
     for mount in ${localmounts}; do
@@ -113,7 +117,7 @@ mount_local_partitions() {
           spawn "swapon ${devnode}" || warn "Could not activate swap ${devnode}"
           echo "${devnode}" >> /tmp/install.swapoff
           ;;
-        ext2|ext3|ext4|reiserfs|reiserfs3|xfs|btrfs|vfat)
+        ext2|ext3|ext4|reiserfs|reiserfs3|xfs|btrfs|vfat|ntfs)
           echo "mount -t ${type} ${devnode} ${chroot_dir}${mountpoint} ${mountopts}" >> /tmp/install.mount
           echo "${chroot_dir}${mountpoint}" >> /tmp/install.umount
           ;;
@@ -203,7 +207,7 @@ fi
 
 set_timezone() {
   [ -e "${chroot_dir}/etc/localtime" ] && spawn "rm ${chroot_dir}/etc/localtime" || die "Could not remove existing /etc/localtime"
-  spawn "cp ${chroot_dir}/usr/share/zoneinfo/${timezone} ${chroot_dir}/etc/localtime" || die "Could not set the timezone."
+  spawn "cp ${chroot_dir}/usr/share/zoneinfo/${timezone} ${chroot_dir}/etc/localtime" || die "Could not set the timezone as \"${timezone}\". Are you sure it's defined correctly?"
   if [ -e "${chroot_dir}/etc/conf.d/clock" ]; then
     spawn "/bin/sed -i 's:#TIMEZONE=\"Factory\":TIMEZONE=\"${timezone}\":' ${chroot_dir}/etc/conf.d/clock" || die "Could not adjust TIMEZONE configuration found at in /etc/conf.d/clock"
   else
@@ -239,7 +243,7 @@ install_cron_daemon() {
   if [ "${cron_daemon}" = "none" ]; then
     debug install_cron_daemon "cron_daemon is 'none'...skipping"
   else
-    spawn_chroot "emerge ${cron_daemon}" || die "Could not emerge a cron daemon."
+    spawn_chroot "emerge ${cron_daemon}" || die "Could not emerge \"${cron_daemon}\" cron daemon."
     spawn_chroot "rc-update add ${cron_daemon} default" || die "Could not add a cron daemon to the default runlevel."
   fi
 }
@@ -336,7 +340,7 @@ configure_bootloader() {
     debug configure_bootloader "bootloader is 'none'...skipping configuration."
   else
     if $(isafunc configure_bootloader_${bootloader}); then
-      configure_bootloader_${bootloader} || die "Could not configure bootloader ${bootloader}"
+      configure_bootloader_${bootloader} || die "Could not configure bootloader \"${bootloader}\""
     else
       die "I don't know how to configure ${bootloader}"
     fi
