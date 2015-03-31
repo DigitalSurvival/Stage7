@@ -1,6 +1,7 @@
 # $Id$
 
-#todo: implement <profile>
+#todo: Implement <install_profile>
+
 install_mode() {
   local mode=$1
   local profile=$2
@@ -9,6 +10,25 @@ install_mode() {
   install_profile="${profile}"
 }
 
+#todo:for fdisk
+fpart() {
+  local drive=$1
+  local minor=$2
+  local type=$3
+  local size=$4
+
+  drive=$(echo ${drive} | sed -e 's:^/dev/::' -e 's:/:_:g')
+  local drive_temp="partitions_${drive}"
+  local tmppart="${minor}:${type}:${size}"
+  if [ -n "$(eval echo \${${drive_temp}})" ]; then
+    eval "${drive_temp}=\"$(eval echo \${${drive_temp}}) ${tmppart}\""
+  else
+    eval "${drive_temp}=\"${tmppart}\""
+  fi
+  debug fpart "${drive_temp} is now: $(eval echo \${${drive_temp}})"
+}
+
+#todo: for parted
 part() {
   local drive=$1
   local minor=$2
@@ -23,7 +43,7 @@ part() {
   else
     eval "${drive_temp}=\"${tmppart}\""
   fi
-  debug part "${drive_temp} is now: $(eval echo \${${drive_temp}})"
+  debug fpart "${drive_temp} is now: $(eval echo \${${drive_temp}})"
 }
 
 mdraid() {
@@ -65,6 +85,13 @@ format() {
   else
     format="${tmpformat}"
   fi
+}
+
+module_import() {
+local m=${*}
+
+module_import=${m}
+echo "module import variable in config function ${module_import}"
 }
 
 mountfs() {
@@ -110,7 +137,7 @@ bootloader_kernel_args() {
   bootloader_kernel_args="${kernel_args}"
 }
 
-#todo: implement GTP/MBR partition table layout support. Add to documentation.
+#todo: implement GTP/MBR partition table support. Add to documentation.
 partition_table_layout() {
   local table=$1
    
@@ -273,17 +300,12 @@ sanity_check_config() {
 
   debug sanity_check_config "$(set | grep '^[a-z]')"
 
-  if [ -n "${install_mode}" -a "${install_mode}" != "normal" -a "${install_mode}" != "chroot" -a "${install_mode}" != "stage4" -a "${install_mode}" != "stage7" ]; then
-    error "install_mode must be set to 'normal', 'chroot', 'stage4', or 'stage7'"
+  if [ -n "${install_mode}" -a "${install_mode}" != "normal" -a "${install_mode}" != "chroot" -a "${install_mode}" != "stage4" ]; then
+    error "install_mode must be set to 'normal', 'chroot', or 'stage4'."
     fatal=1
   fi
-
-  #todo: sanity check install profile  
-  if [ "${install_mode}" == "stage7" -a "${install_profile}" != "ds-desktop" -a "${install_profile}" != "ds-server" ]; then
-  error "install_profile must be either 'ds-desktop', or 'ds-server' if install_mode is 'stage7'." 
-  fi
   
-  #todo: sanity check partition table layout
+  #todo: Sanity check partition table layout.
   if [ -z "${partition_table_layout}" ]; then
     warn "partition_table_layout not set...defaulting to MBR."
   fi
@@ -309,7 +331,7 @@ sanity_check_config() {
 	hostname="Stage7"
   fi
   if [ -z "${root_password}" -a -z "${root_password_hash}" ]; then
-    error "You must specify a root password before you can continue..."
+    error "You must specify a root password before you can continue."
     fatal=1
   fi
   if [ -z "${timezone}" ]; then
@@ -342,7 +364,7 @@ sanity_check_config() {
     fatal=1
   fi
 
-  debug sanity_check_config "$(set | grep '^[a-z]')"
+  #debug sanity_check_config "$(set | grep '^[a-z]')"
 
   [ "${fatal}" = "1" ] && exit 1
 }

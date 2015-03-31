@@ -1,12 +1,33 @@
 # $Id$
 
+# This function checks for existing specific system tools on the live medium (just be safe)
+# Add logic to correctly check for existing tools...
+pre_chroot_tool_check() {
+tool_list=[$@]
+
+  if [ ! -x "`which ${tool} 2>&1`" ]; then
+    error "It appears ${tool} is missing. Please make sure it is installed before running Stage7 with the current install profile."
+    exit 1
+  else
+  tool_location=`which ${tool}`
+  debug pre_chroot_tool_check " Successfully located ${tool} utility at ${tool_location}"
+  fi
+
+}
+
+post_chroot_tool_check() {
+tool_list=$1
+
+
+}
+
 get_arch() {
   ${linux32} uname -m | sed -e 's:i[3-6]86:x86:' -e 's:x86_64:amd64:' -e 's:parisc:hppa:'
 }
 
 detect_disks() {
   if [ ! -d "/sys" ]; then
-    error "Cannot detect disks due to missing /sys"
+    error "Cannot detect disks due to missing /sys directory"
     exit 1
   fi
   count=0
@@ -23,12 +44,12 @@ get_mac_address() {
   /bin/ifconfig | grep ether | head -n 1 | sed -e 's:^.*ether ::' -e 's: .*$::'
 }
 
-#todo: implement the getting of IPv4 addresses for web interface plans.
+#todo: implement the getting of local IPv4 addresses for web interface plans.
 get_ipv4_address() {
   /bin/ifconfig | grep inet | head -n 1 | sed -e 's:^.*inet ::' -e 's: .*$::'
 }
 
-#todo: implement the getting of IPv6 addresses for web interface plans.
+#todo: implement the getting of local IPv6 addresses for web interface plans.
 get_ipv6_address () {
   /bin/ifconfig | grep inet6 | head -n 1 | sed -e 's:^.*inet6 ::' -e 's: .*$::'
 }
@@ -39,7 +60,7 @@ unpack_tarball() {
 
   tar_flags="xv"
 
-  if [ "$preserve" = "1" ]; then
+  if [ "$preserve" = "1" ] || [ "$preserve" = "yes" ]; then
     tar_flags="${tar_flags}p"
   fi
 

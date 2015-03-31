@@ -69,7 +69,7 @@ setup_lvm() {
     spawn "lvcreate -L${size} -n${name} ${volgroup}" || die "Could not create logical volume '${name}' with size ${size} in volume group '${volgroup}'"
   done
 }
-#todo: add fat support for efi, FAT, and NTFS
+#todo: Add FAT support for EFI, FAT, and NTFS partitions.
 format_devices() {
   for device in ${format}; do
     local devnode=$(echo ${device} | cut -d: -f1)
@@ -98,7 +98,7 @@ format_devices() {
   done
 }
 
-#todo: add fat support for efi, add ntfs support
+#todo: Add FAT support for EFI, FAT, and NTFS partitions.
 mount_local_partitions() {
   if [ -z "${localmounts}" ]; then
     warn "There are no local mounts specified. This is a bit unusual, but you da' boss..."
@@ -187,7 +187,7 @@ install_portage_tree() {
   elif [ "${tree_type}" = "none" ]; then
     warn "'none' specified...skipping..."
   else
-    die "Unrecognised tree_type: ${tree_type}"
+    die "Unrecognized tree_type: ${tree_type}"
   fi
 }
 
@@ -207,7 +207,7 @@ fi
 
 set_timezone() {
   [ -e "${chroot_dir}/etc/localtime" ] && spawn "rm ${chroot_dir}/etc/localtime" || die "Could not remove existing /etc/localtime"
-  spawn "cp ${chroot_dir}/usr/share/zoneinfo/${timezone} ${chroot_dir}/etc/localtime" || die "Could not set the timezone as \"${timezone}\". Are you sure it's defined correctly?"
+  spawn "cp ${chroot_dir}/usr/share/zoneinfo/${timezone} ${chroot_dir}/etc/localtime" || die "Could not set the timezone as \"${timezone}\". Is it a valid timezone?"
   if [ -e "${chroot_dir}/etc/conf.d/clock" ]; then
     spawn "/bin/sed -i 's:#TIMEZONE=\"Factory\":TIMEZONE=\"${timezone}\":' ${chroot_dir}/etc/conf.d/clock" || die "Could not adjust TIMEZONE configuration found at in /etc/conf.d/clock"
   else
@@ -222,7 +222,7 @@ build_kernel() {
     spawn_chroot "emerge ${kernel_sources}" || die "Could not emerge \"${kernel_sources}\" kernel sources."
     spawn_chroot "emerge genkernel" || die "Could not emerge genkernel."
     if [ -n "${kernel_config_uri}" ]; then
-      fetch "${kernel_config_uri}" "${chroot_dir}/tmp/kconfig" || die "Could not fetch kernel a config."
+      fetch "${kernel_config_uri}" "${chroot_dir}/tmp/kconfig" || die "Could not fetch kernel a configuration file."
       spawn_chroot "genkernel --kernel-config=/tmp/kconfig ${genkernel_opts} kernel" || die "Could not build a custom kernel."
     else
       spawn_chroot "genkernel ${genkernel_opts} all" || die "Could not build a generic kernel."

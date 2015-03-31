@@ -13,7 +13,9 @@
 # http://www.digitalsurvival.us/ways_to_help.html
 
 # Example Description:
-# This install profile is an example of what a generic AMD64 server configuration could look like.
+# This install profile is an example of what a generic ARM (mobile phone) server configuration could look like.
+
+#todo: set the -march flag properly
 
 install_mode normal
 
@@ -47,7 +49,7 @@ net eth0 dhcp
 post_install_portage_tree() {
   cat > ${chroot_dir}/etc/portage/make.conf <<EOF
 CHOST="i686-pc-linux-gnu"
-CFLAGS="-O2 -march=k8 -pipe"
+CFLAGS="-O2 -march=native -pipe"
 CXXFLAGS="\${CFLAGS}"
 USE="-X -gtk -gnome -kde -qt"
 EOF

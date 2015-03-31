@@ -1,12 +1,14 @@
 # $Id$
-# Created by Maffblaster, October 1st, 2014
+# Created by Matthew Marchese, October 1st, 2014
 # This is free software. Feel free use, modify, or redistribute it as needed.
 # It is my goal for it to be helpful to you!
 
-# If you have questions Stage7:
+# If you have questions about Stage7:
 # http://www.digitalsurvival.us/Stage7
+
 # To request improvements or report issues:
 # https://github.com/DigitalSurvival/Stage7/issues/new
+
 # If you really, really like it please donate time, effort, or money to Digital Survival: 
 # http://www.digitalsurvival.us/ways_to_help.html
 
@@ -14,6 +16,8 @@
 # This install profile is an example of what an AMD64 server with software RAID support could look like.
 
 #todo: software raid config
+
+install_mode normal
 
 hostname Stage7_Demo
 
@@ -25,9 +29,9 @@ rootpw stage7
 
 bootloader grub
 
-part hda 1 83 256M
-part hda 2 82 3G
-part hda 3 83 +
+fpart hda 1 83 256M
+fpart hda 2 82 3G
+fpart hda 3 83 +
 
 format /dev/hda1 ext4
 format /dev/hda2 swap
@@ -43,7 +47,7 @@ net eth0 dhcp
 
 #Still need to set the correct chost variable
 post_install_portage_tree() {
-  cat > ${chroot_dir}/etc/make.conf <<EOF
+  cat > ${chroot_dir}/etc/portage/make.conf <<EOF
 CHOST="i686-pc-linux-gnu"
 CFLAGS="-O2 -march=native -pipe"
 CXXFLAGS="\${CFLAGS}"

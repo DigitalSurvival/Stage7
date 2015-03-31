@@ -29,7 +29,7 @@ configure_bootloader_silo() {
     fi
   done
   if ! spawn_chroot "/sbin/silo -C /boot/silo.conf"; then
-    error "could not install silo"
+    error "Could not install silo"
     return 1
   fi
 }

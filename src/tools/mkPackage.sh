@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Written by Matthew Marchese for the Stage7 project.
+# License: GPLv2
 # Site: http://www.DigitalSurvival.us/Stage7
 # Source: https://github.com/DigitalSurvival/Stage7
 

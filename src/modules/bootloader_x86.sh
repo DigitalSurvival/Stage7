@@ -49,7 +49,7 @@ configure_bootloader_grub_legacy() {
   fi
 }
 
-# todo: grub2 has become the default bootloader.
+# todo: Grub 2 has become the default bootloader. Add support.
 configure_bootloader_grub() {
 # BIOS/MBR or BIOS/GPT
 

@@ -40,18 +40,30 @@ fetch_stage7() {
   fetch_http_https_ftp "${realurl}" "${localfile}"
 }
 
+#todo: started rsync fetcher; needs tested
+fetch_rsync() {
+  local uri=$1
+  local localfile=$2
+  
+  debug fetch_rsync "Fetching ${uri} to ${2}"
+  spawn "rsync -a ${uri} ${localfile}"
+  local rsync_exitcode=$?
+  debug fetch_rsync "Exit code from rsync was ${rsync_exitcode}."
+  return ${rsync_exitcode}
+}
+
 fetch_http() {
   debug fetch_http "Calling fetch_http_https_ftp() to do real work..."
   fetch_http_https_ftp "$@"
 }
 
 fetch_https() {
-  debug fetch_http "Calling fetch_http_https_ftp() to do real work..."
+  debug fetch_https "Calling fetch_http_https_ftp() to do real work..."
   fetch_http_https_ftp "$@"
 }
 
 fetch_ftp() {
-  debug fetch_http "Calling fetch_http_https_ftp() to do real work..."
+  debug fetch_ftp "Calling fetch_http_https_ftp() to do real work..."
   fetch_http_https_ftp "$@"
 }
 

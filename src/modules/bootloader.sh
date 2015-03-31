@@ -4,7 +4,7 @@ map_device_to_grub_device() {
   local device=$1
 
   if [ ! -f "${chroot_dir}/boot/grub/device.map" ]; then
-    debug map_device_to_grub_device "device.map doesn't exist...creating"
+    debug map_device_to_grub_device "device.map file doesn't exist. Creating device map now..."
     spawn_chroot "echo quit | /sbin/grub --batch --no-floppy --device-map=/boot/grub/device.map >/dev/null 2>&1" || die "Could not create Grub legacy device map."
   fi
   grep "${device}\$" ${chroot_dir}/boot/grub/device.map | awk '{ print $1; }' | sed -e 's:[()]::g'
@@ -14,7 +14,7 @@ map_device_to_grub_device() {
 get_kernel_and_initrd() {
   local kernels=""
   
-  for kernel in $(ls -1t --color=no ${ckernelhroot_dir}/boot/*kernel*); do
+  for kernel in $(ls -1t --color=no ${kernelchroot_dir}/boot/*kernel*); do
     kernel="$(echo ${kernel} | sed -e 's:^.\+/kernel-:kernel-:')"
     if [ -e "${chroot_dir}/boot/$(echo ${kernel} | sed -e 's:kernel-:initrd-:')" ]; then
       local initrd="$(echo ${kernel} | sed -e 's:kernel-:initrd-:')"

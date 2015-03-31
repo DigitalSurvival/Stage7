@@ -2,7 +2,7 @@
 # The spawn module creates a new process for each command passed to it.
 
 chroot_dir=/mnt/gentoo
-output_logfile=/tmp/installoutput.log
+output_logfile=/tmp/stage7_spawn.log
 
 spawn() {
   local cmd=$1

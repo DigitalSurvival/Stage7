@@ -59,22 +59,24 @@ format_devnode() {
   echo "${devnode}"
 }
 
+# todo: verify printf to insure POSIX compatibility
 fdisk_command() {
   local device=$1
   local cmd=$2
 
   debug fdisk_command "Running fdisk command '${cmd}' on device ${device}"
-  spawn "echo -en '${cmd}\nw\n' | fdisk ${device}"
+  spawn "printf '${cmd}\nw\n' | fdisk ${device}"
   return $?
 }
 
-# todo: Adding functionality for parted...
+# todo: Adding functionality for Parted...
+# todo: change the echo -en to printf to insure POSIX compatibility 
 parted_command() {
   local device=$1
   local cmd=$2
   
   debug parted_command "Running parted command '${cmd}' on device ${device}"
-  spawn "echo -en '${cmd}\nw\n' | parted ${device}"
+  spawn "printf '${cmd}\nw\n' | parted ${device}"
 }
 
 sanity_check_config_partition() {
@@ -83,6 +85,6 @@ sanity_check_config_partition() {
 
 local arch=$(get_arch)
 if [ -f "modules/partition_${arch}.sh" ]; then
-  debug partition.sh "Loading arch-specific module partition_${arch}.sh"
+  debug partition.sh "Loading arch-specific module partition ${arch}.sh"
   import partition_${arch}
 fi
