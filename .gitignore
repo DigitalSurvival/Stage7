@@ -28,4 +28,5 @@ Thumbs.db
 # Removes the package files, for now at least...
 testing/
 packages/
+pkgs/
 

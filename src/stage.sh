@@ -1,7 +1,7 @@
 #!/bin/sh
 # $Id$
 
-VERSION=0.1.1-alpha
+VERSION="0.1.1-alpha"
 
 # Option variables
 debug=0
@@ -13,7 +13,7 @@ import() {
   local module="${1}"
 
   if [ -f "${module}.sh" ]; then
-  error "Module ${module}.sh is missing. Re-installing Stage7 should fix the problem."
+  error "Module ${module}.sh appears to be missing. Re-installing Stage7 should fix the problem."
   exit 1
   else
   . modules/${module}.sh
@@ -29,23 +29,37 @@ usage() {
     else
     cat <<EOF
 Usage:
-  stage7 [-h|--help] [-b|--backup] [-d|--debug] [-s|--sanity-check] [-q|--quiet]
-              [-v|--verbose] [-V|--version] <install_mode> <install_profile>
+  stage [--global-options] <command> [--command-options] [--command-arguments]
+  
+Global options:
 
-Options:
-  -h|--help            Show this message and exit.
-  -b|--backup          Creates stage4 backup of the system.
-  -c|--client <host>   Act as a client and connect to a stage7d server.
-  -d|--debug           Output debugging messages.
-  -q|--quiet           Only output fatal error messages.
-  -s|--sanity-check    Sanity check install profile and exit.
+  -h|--help            Show this message and exit. Follow this option with a
+					   valid command to narrow help scope.
+  -q|--quiet           Only output fatal error messages. Use this option when
+					   no output is desired.
   -v|--verbose         Be verbose (show command output).
-  -V|--version         Print version and exit.
+  -V|--version         Print version and exit. 
 
+Backup options:
 
-Arguments:
-  <install_mode>       The install mode (normal, chroot, stage4).
-  <install_profile>    Path to an install profile.
+  stage [--global-options] backup [--command-options] [--command-arguments]
+
+  -e|--exclude		   Files or directories to exclude.
+  -c|--compression	   Type of compression to use: gz, bz2, or xz
+  
+Install options:
+
+  stage [--global-options] install [--command-options] [--command-arguments]
+
+  -c|--client <host>   Act as a client and connect to a staged server.
+  -d|--debug           Output debugging messages.
+  -p|--profile		   Specify a path to a profile. 
+  -s|--sanity-check    Sanity check install profile and exit.
+
+Recover options:
+
+  stage [--global-options] recover [--command-options] [--command-arguments]
+
 EOF
   fi
 }
@@ -54,7 +68,7 @@ EOF
 import output
 import config
 import stepcontrol
-
+import depcheck
 
 # Parse arguments
 while [ ${#} -gt 0 ]
