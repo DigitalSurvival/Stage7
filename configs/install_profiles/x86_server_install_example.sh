@@ -1,9 +1,9 @@
 # $Id$
-# Created by Matthew Marchese, October 1st, 2014
+# Created by Matthew Marchese
 # This is free software. Feel free use, modify, or redistribute it as needed.
 # It is my goal for it to be helpful to you!
 
-# If you have questions about Stage7:
+# If you have questions about stage7:
 # http://www.digitalsurvival.us/Stage7
 
 # To request improvements or report issues:
@@ -12,32 +12,32 @@
 # If you really, really like it please donate time, effort, or money to Digital Survival: 
 # http://www.digitalsurvival.us/ways_to_help.html
 
-# Example Description:
+# Description:
 # This install profile is an example of what a generic x86 server configuration could look like.
 
 install_mode normal
 
-hostname Stage7_Demo
+hostname stage7-demo
 
-stage_uri https://sourceforge.net/p/dsgentoo/code/ci/master/tree/stages/amd64/stage3-amd64-20140227.tar.bz2?format=raw
+stage_uri http://distfiles.gentoo.org/releases/x86/autobuilds/current-stage3-i686/stage3-i686-20160510.tar.bz2
 
-tree_type snapshot https://sourceforge.net/p/dsgentoo/code/ci/master/tree/snapshots/portage-20140302.tar.bz2?format=raw
+tree_type snapshot http://distfiles.gentoo.org/snapshots/portage-latest.tar.bz2
 
 rootpw stage7
 
 bootloader grub
 
-fpart hda 1 83 256M
-fpart hda 2 82 3G
-fpart hda 3 83 +
+fpart sda 1 83 256M
+fpart sda 2 82 3G
+fpart sda 3 83 20G
 
-format /dev/hda1 ext4
-format /dev/hda2 swap
-format /dev/hda3 ext4
+format /dev/sda1 ext4
+format /dev/sda2 swap
+format /dev/sda3 ext4
 
-mountfs /dev/hda1 ext4 /boot
-mountfs /dev/hda2 swap
-mountfs /dev/hda3 ext4 / noatime
+mountfs /dev/sda1 ext4 /boot
+mountfs /dev/sda2 swap
+mountfs /dev/sda3 ext4 / noatime
 
 net eth0 dhcp
 
