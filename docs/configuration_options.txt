@@ -1,6 +1,6 @@
 
 
-Stage7 Configuration Options
+# Stage7 configuration options
 
 The following is a list of all the built-in configuration options. Descriptions and valid parameters
 can be found in this document. Note that documentation for extra modules will not be located here.
@@ -34,11 +34,11 @@ install_profile — Choose the install profile. Install mode must be "normal" or
 	profile — Sets the system profile which modifies the depth of the 
 			  install configuration. These are currently the default profiles:
 	  
-	        xorg_profile       — installs xorg-server and xterm with no default window manager.
+	    xorg_profile       — installs xorg-server and xterm with no default window manager.
 		openbox_profile    — installs xorg-server and sets OpenBox as the window manager.
 		lxde_profile	   — installs xorg-server and sets LXDE as the default window manager.
 		server_profile     — installs using a headless server profile; no xorg-server or window
-					  managers equates to maximum free resources.
+					         managers equates to maximum free resources.
 	
 fpart — Creates a partition using fdisk.
 
@@ -349,7 +349,7 @@ verbose — Enable verbose mode (same as using -V|--verbose option).
 
 The following features may be abandoned or severely modified in upcoming releases:
 
-   server — Specify a Stage7 server.
+   server — Specify a stage7d server.
 
   Usage:
     server <host>[:<port>]

@@ -3,7 +3,7 @@
 - [x] ~~Write a package building script to auto-generate new releases.~~
   1. ~~Implement Stage7 package script with super tight compression for minimal bandwidth consumption and maximum fun (xz).~~ *Done!*
 - [x] ~~Write a "getStage7" script to pull down Stage7 package files from the web and completely configure the project.~~ *Done!*
-- [ ] Write end user instructions and documentation.
+- [ ] Write end user instructions and documentation:
   1. ~~Update the project's README page with accurate "how to get" and "how to use" information.~~
   2. Keep the example configuration files tidy after adding new features.
   3. Search the configuration options file in /docs folder for #todo stuff.

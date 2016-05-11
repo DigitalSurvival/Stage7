@@ -1,8 +1,8 @@
 # $Id$
 
 run_emerge() {
-  pkgs=$1
+  PKGS="${1}"
 
-  debug emerge "Portage packages are: '${pkgs}'"
-  spawn_chroot "emerge ${emerge_opts} ${pkgs}"
+  debug emerge "Portage packages are: '${PKGS}'"
+  spawn_chroot "emerge ${emerge_opts} ${PKGS}"
 }

@@ -4,6 +4,7 @@ get_arch() {
 	${linux32} uname -m | sed -e 's:i[3-6]86:x86:' -e 's:x86_64:amd64:' -e 's:parisc:hppa:'
 }
 
+# todo /sys is no longer necessary to detect disks, not /dev can be used...
 detect_disks() {
 	if [ ! -d "/sys" ]; then
 		error "Cannot detect disks due to missing /sys directory"

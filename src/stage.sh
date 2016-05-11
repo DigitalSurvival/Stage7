@@ -59,32 +59,31 @@ Usage:
 Global stage options:
 
   -h|--help            Show this message and exit. Follow this option with a
-					   valid command to narrow help scope.
+                       valid command to narrow help scope.
   -q|--quiet           Only output fatal error messages. Use this option when
-					   no output is desired.
+                       no output is desired.
   -v|--verbose         Be verbose (show command output).
   -V|--version         Print version and exit. 
 
   backup subcommand options:
 
-  stage [--global-options] backup [--command-options] [--command-arguments]
-
     -ef|--exclude-file	   Specify a path to an exclude file.
-    -e|--exclude		   Files or directories to exclude.
+    -e|--exclude           Files or directories to exclude.
     -c|--compression	   Type of compression to use: gz, bz2, or xz
   
   install subcommand options:
 
-  stage [--global-options] install [--command-options] [--command-arguments]
-
     -c|--client <host>   Act as a client and connect to a staged server.
     -d|--debug           Output debugging messages.
-    -p|--profile		 Specify a path to a profile. 
+    -p|--profile         Specify a path to a profile. 
     -s|--sanity-check    Sanity check install profile and exit.
+    -m|--mode            Specify an install mode (choose from normal,
+                         chroot, stage4).
 
   recover subcommand options:
-
-  stage [--global-options] recover [--command-options] [--command-arguments]
+  
+    -d|--debug           Output debugging messages.
+    -p|--profile         Specify a path to a profile.
 
 For example:
 
@@ -92,7 +91,8 @@ stage -v install --profile /path/to/profile
 
 Copyright (C) 2014-2016 Matthew Marchese
 EOF
-  fi
+	exit 0
+	fi
 }
 
 # These modules are always needed and therefore will be included by default
@@ -101,29 +101,35 @@ import config
 import stepcontrol
 import depcheck
 
-# Parse arguments
+# Parse all parameters, the options with paths require an extra shift
 while [ "${#}" -gt 0 ]; do
 	CMDLINE_INPUT="${1}"
 	shift
 	case "${CMDLINE_INPUT}" in
-	backup|install|recover)
-		echo "backup, install, or recover passed"
+	b|Backup|backup|BACKUP|i|install|Install|INSTALL|r|recover|Recover|RECOVER)
+		SUB_COMMAND="${CMDLINE_INPUT}"
+	;;
+	-m|--mode)
+		# Mode should be the second argument if -m|--mode is passed
+		INSTALL_MODE="${2}"
+		shift
 	;;
 	-p|--profile)
 		# Profile path should be the second argument if -p|--profile
 		INSTALL_PROFILE="${2}"
+		shift
 	;;
 	-h|--help)
 		usage
-		exit 0
 	;;
-	-b|--backup)
-		usage "Unfortunately the backup option is not yet implemented. Check back for updates!"
-		BACKUP_LOCATION="${1}"
-		BACKUP_PROFILE="${2}"
-		import rescue.sh
+	-e|--exclude)
+		EXCLUDE_LIST="${EXCLUDE_LIST}:${2}"
 		shift
-		exit 0
+	;;
+	-ef|--exclude-file)
+		EXCLUDE_FILE="${2}"
+		debug "exclude file passed: ${EXCLUDE_FILE}"
+		shift
 	;;
 	-c|--client)
 		usage "Unfortunately the client option may be considerably altered or eliminated. It has been disabled for now..."
@@ -133,6 +139,7 @@ while [ "${#}" -gt 0 ]; do
 	  ;;
 	-d|--debug)
 		DEBUG="1"
+		debug "debug option passed"
 	  ;;
 	-q|--quiet)
 		if [ "${VERBOSE}" -ge 1 ]; then
@@ -177,19 +184,38 @@ if [ -n "${SERVER}" ]; then
 	fi
 fi
 
-if [ -z "${INSTALL_MODE}" ]; then
-	usage "An install mode must be specified"
-	exit 1
-fi
+case "${SUB_COMMAND}" in
+	i|install|Install|INSTALL)
+		if [ -z "${INSTALL_MODE}" ]; then
+			usage "An install mode must be specified."
+		else
+			if [ "${INSTALL_MODE}" != "normal" ] || [ "${INSTALL_MODE}" != "chroot" ] || [ "${INSTALL_MODE}" != "stage4" ]; then
+				usage "The install mode must be one of normal, chroot, or stage4,"
+			fi
+		fi
 
-if [ -z "${INSTALL_PROFILE}" ]; then
-	usage "An install profile must be specified"
-	exit 1
-fi
+		if [ -z "${INSTALL_PROFILE}" ]; then
+			usage "An install profile must be specified"
+			exit 1
+		else
+			if [ ! -f "${INSTALL_PROFILE}" ]; then
+				usage "The install profile cannot be accessed. Does it exist?" && exit 1
+			fi
+		fi
+	;;
+	b|backup|Backup|BACKUP)
+		echo "handle backup case"
+	;;
+	r|recover|Recover|RECOVER)
+		echo "handle recover case"
+	;;
+	*)
+		usage "Possible subcommands include: install, backup, and recover"
+	;;
+esac
 
 if [ ! -f "${INSTALL_PROFILE}" ]; then
 	error "Specified install profile does not exist"
-	exit 1
 else
 	. "${INSTALL_PROFILE}"
 
