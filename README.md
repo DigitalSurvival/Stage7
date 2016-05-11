@@ -1,4 +1,4 @@
-![Stage7 Graphic](http://bit.ly/1m6NG9H "stage7 banner graphic")
+![stage7 graphic](https://raw.githubusercontent.com/DigitalSurvival/Stage7/master/ui/stage7_logo.png "stage7 banner graphic")
 
 The goal of stage7 is to provide a perfect "automagic" installer for Gentoo-based Linux distributions. For now the installer works on full size computers, but in the future support may be added for notebooks and other platforms. Many attempts at a way to automatically install Gentoo have, however none of them have been maintained. stage7 is an attempt to create an easy to use, *continually maintained* installer.
 
