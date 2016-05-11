@@ -1,4 +1,4 @@
-Dependencies List
+Dependencies list
 =====
 
 There needs to be a few tools present in a pre-install environment on your system in order for Stage7 to work 
@@ -6,7 +6,7 @@ properly. The script should detect missing utilities and
 prompt the user for the utilities packages to be installed. In order for the user missing packages in the field a comprehensive list of required 
 packages (along with package descriptions) can be found in this document.
 
-##Pre-Install Packages:
+## Pre-install packages:
 
 **net-ftp/atftp**
 > /usr/bin/atftp
@@ -53,6 +53,9 @@ packages (along with package descriptions) can be found in this document.
 
 **sys-apps/openrc**
 > /sbin/rc-update
+
+**net-misc/rsync**
+> /usr/bin/rsync
 
 **sys-apps/coreutils**
 > /bin/cat
@@ -102,7 +105,9 @@ packages (along with package descriptions) can be found in this document.
 **sys-fs/ntfs3g**
 > /usr/sbin/mkfs.ntfs
 
-##Post-install Packages:
+## Chroot packages?
+
+## Post-install packages:
 
 **app-admin/eselect**
 > usr/bin/eselect

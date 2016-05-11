@@ -21,7 +21,7 @@ sys-apps/sed (sed)
 * If statements
 ** Use double brackets for if stagements
 ** When using a variable, cite it properly (see above)
-
+* When possible, use printf instead of echo. There are too many POSIX problems with echo.
 
 All bash code should be checked for errors at http://www.shellcheck.net/ before being committed into this repository.
 

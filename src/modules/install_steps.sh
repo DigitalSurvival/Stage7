@@ -1,101 +1,102 @@
 # $Id$
 
 run_pre_install_script() {
-  if [ -n "${pre_install_script_uri}" ]; then
-    fetch "${pre_install_script_uri}" "${chroot_dir}/var/tmp/pre_install_script" || die "Could not fetch pre-install script."
-    chmod +x "${chroot_dir}/var/tmp/pre_install_script"
-    spawn_chroot "/var/tmp/pre_install_script" || die "Error running pre-install script."
-    spawn "rm ${chroot_dir}/var/tmp/pre_install_script"
-  elif $(isafunc pre_install); then
-    pre_install || die "Error running pre_install()"
-  else
-    debug run_pre_install_script "No pre-install script set."
-  fi
+	if [ -n "${pre_install_script_uri}" ]; then
+		fetch "${pre_install_script_uri}" "${chroot_dir}/var/tmp/pre_install_script" || die "Could not fetch pre-install script."
+		chmod +x "${chroot_dir}/var/tmp/pre_install_script"
+		spawn_chroot "/var/tmp/pre_install_script" || die "Error running pre-install script."
+		spawn "rm ${chroot_dir}/var/tmp/pre_install_script"
+	elif $(isafunc pre_install); then
+		pre_install || die "Error running pre_install()"
+	else
+		debug run_pre_install_script "No pre-install script set."
+	fi
 }
 
 #todo: Investigate this function when adding parted support.
 partition() {
-  for device in $(set | grep '^partitions_' | cut -d= -f1 | sed -e 's:^partitions_::'); do
-    debug partition "device is ${device}"
-    local device_temp="partitions_${device}"
-    local device="/dev/$(echo "${device}" | sed  -e 's:_:/:g')"
-    local device_size="$(get_device_size_in_mb ${device})"
-    create_disklabel ${device} || die "Could not create disklabel for device ${device}"
-    for partition in $(eval echo \${${device_temp}}); do
-      debug partition "Partition is ${partition}"
-      local minor=$(echo ${partition} | cut -d: -f1)
-      local type=$(echo ${partition} | cut -d: -f2)
-      local size=$(echo ${partition} | cut -d: -f3)
-      local devnode=$(format_devnode "${device}" "${minor}")
-      debug partition "devnode is ${devnode}"
-      if [ "${type}" = "extended" ]; then
-        newsize="${device_size}"
-      else
-        size_devicesize="$(human_size_to_mb ${size} ${device_size})"
-        newsize="$(echo ${size_devicesize} | cut -d '|' -f1)"
-        [ "${newsize}" = "-1" ] && die "Could not translate size '${size}' to a usable value."
-        device_size="$(echo ${size_devicesize} | cut -d '|' -f2)"
-      fi
-      add_partition "${device}" "${minor}" "${newsize}" "${type}" || die "Could not add partition ${minor} to device ${device}"
-    done
-  done
+	for device in $(set | grep '^partitions_' | cut -d= -f1 | sed -e 's:^partitions_::'); do
+		debug partition "device is ${device}"
+		local device_temp="partitions_${device}"
+		local device="/dev/$(echo "${device}" | sed  -e 's:_:/:g')"
+		local device_size="$(get_device_size_in_mb ${device})"
+		create_disklabel ${device} || die "Could not create disklabel for device ${device}"
+		for partition in $(eval echo \${${device_temp}}); do
+			debug partition "Partition is ${partition}"
+			local minor=$(echo ${partition} | cut -d: -f1)
+			local type=$(echo ${partition} | cut -d: -f2)
+			local size=$(echo ${partition} | cut -d: -f3)
+			local devnode=$(format_devnode "${device}" "${minor}")
+			debug partition "devnode is ${devnode}"
+			if [ "${type}" = "extended" ]; then
+				newsize="${device_size}"
+			else
+				size_devicesize="$(human_size_to_mb ${size} ${device_size})"
+				newsize="$(echo ${size_devicesize} | cut -d '|' -f1)"
+				[ "${newsize}" = "-1" ] && die "Could not translate size '${size}' to a usable value."
+				device_size="$(echo ${size_devicesize} | cut -d '|' -f2)"
+			fi
+			add_partition "${device}" "${minor}" "${newsize}" "${type}" || die "Could not add partition ${minor} to device ${device}"
+		done
+	done
 }
 
 setup_md_raid() {
-  for array in $(set | grep '^mdraid_' | cut -d= -f1 | sed -e 's:^mdraid_::' | sort); do
-    local array_temp="mdraid_${array}"
-    local arrayopts=$(eval echo \${${array_temp}})
-    local arraynum=$(echo ${array} | sed -e 's:^md::')
-    if [ ! -e "/dev/md${arraynum}" ]; then
-      spawn "mknod /dev/md${arraynum} b 9 ${arraynum}" || die "Could not create device node for mdraid array ${array}"
-    fi
-    spawn "mdadm --create --run /dev/${array} ${arrayopts}" || die "Could not create mdraid array ${array}"
-  done
+	for array in $(set | grep '^mdraid_' | cut -d= -f1 | sed -e 's:^mdraid_::' | sort); do
+		local array_temp="mdraid_${array}"
+		local arrayopts=$(eval echo \${${array_temp}})
+		local arraynum=$(echo ${array} | sed -e 's:^md::')
+		if [ ! -e "/dev/md${arraynum}" ]; then
+			spawn "mknod /dev/md${arraynum} b 9 ${arraynum}" || die "Could not create device node for mdraid array ${array}"
+		fi
+		spawn "mdadm --create --run /dev/${array} ${arrayopts}" || die "Could not create mdraid array ${array}"
+	done
 }
 
 setup_lvm() {
-  for volgroup in $(set | grep '^lvm_volgroup_' | cut -d= -f1 | sed -e 's:^lvm_volgroup_::' | sort); do
-    local volgroup_temp="lvm_volgroup_${volgroup}"
-    local volgroup_devices="$(eval echo \${${volgroup_temp}})"
-    for device in ${volgroup_devices}; do
-      spawn "pvcreate -ffy ${device}" || die "Could not run 'pvcreate' on ${device}"
-    done
-    spawn "vgcreate ${volgroup} ${volgroup_devices}" || die "Could not create volume group '${volgroup}' from devices: ${volgroup_devices}"
-  done
-  for logvol in ${lvm_logvols}; do
-    local volgroup="$(echo ${logvol} | cut -d '|' -f1)"
-    local size="$(echo ${logvol} | cut -d '|' -f2)"
-    local name="$(echo ${logvol} | cut -d '|' -f3)"
-    spawn "lvcreate -L${size} -n${name} ${volgroup}" || die "Could not create logical volume '${name}' with size ${size} in volume group '${volgroup}'"
-  done
+	for volgroup in $(set | grep '^lvm_volgroup_' | cut -d= -f1 | sed -e 's:^lvm_volgroup_::' | sort); do
+		local volgroup_temp="lvm_volgroup_${volgroup}"
+		local volgroup_devices="$(eval echo \${${volgroup_temp}})"
+		for device in ${volgroup_devices}; do
+			spawn "pvcreate -ffy ${device}" || die "Could not run 'pvcreate' on ${device}"
+		done
+		spawn "vgcreate ${volgroup} ${volgroup_devices}" || die "Could not create volume group '${volgroup}' from devices: ${volgroup_devices}"
+	done
+	for logvol in ${lvm_logvols}; do
+		local volgroup="$(echo ${logvol} | cut -d '|' -f1)"
+		local size="$(echo ${logvol} | cut -d '|' -f2)"
+		local name="$(echo ${logvol} | cut -d '|' -f3)"
+		spawn "lvcreate -L${size} -n${name} ${volgroup}" || die "Could not create logical volume '${name}' with size ${size} in volume group '${volgroup}'"
+	done
 }
 #todo: Add FAT support for EFI, FAT, and NTFS partitions.
 format_devices() {
-  for device in ${format}; do
-    local devnode=$(echo ${device} | cut -d: -f1)
-    local fs=$(echo ${device} | cut -d: -f2)
-    local formatcmd=""
-    case "${fs}" in
-      swap)
-        formatcmd="mkswap ${devnode}"
-        ;;
-      ext2|ext3|ext4|xfs|btrfs|ntfs|vfat)
-        formatcmd="mkfs.${fs} ${devnode}"
-        ;;
-      reiserfs|reiserfs3)
-        formatcmd="mkreiserfs -q ${devnode}"
-        ;;
-	  efi)
-	    formatcmd="mkfs.vfat -s2 -F32 ${devnode}"
+	for device in ${format}; do
+		local devnode=$(echo ${device} | cut -d: -f1)
+		local fs=$(echo ${device} | cut -d: -f2)
+		local formatcmd=""
+		case "${fs}" in
+		swap)
+			formatcmd="mkswap ${devnode}"
 		;;
-      *)
-        formatcmd=""
-        warn "Don't know how to format ${devnode} as ${fs}"
-    esac
-    if [ -n "${formatcmd}" ]; then
-      spawn "${formatcmd}" || die "Could not format ${devnode} with command: ${formatcmd}"
-    fi
-  done
+		ext2|ext3|ext4|xfs|btrfs|ntfs|vfat)
+			formatcmd="mkfs.${fs} ${devnode}"
+		;;
+		reiserfs|reiserfs3)
+			formatcmd="mkreiserfs -q ${devnode}"
+		;;
+		efi)
+			formatcmd="mkfs.vfat -s2 -F32 ${devnode}"
+		;;
+		*)
+			formatcmd=""
+		warn "Don't know how to format ${devnode} as ${fs}"
+		esac
+		
+		if [ -n "${formatcmd}" ]; then
+			spawn "${formatcmd}" || die "Could not format ${devnode} with command: ${formatcmd}"
+		fi
+	done
 }
 
 #todo: Add FAT support for EFI, FAT, and NTFS partitions.
@@ -152,126 +153,127 @@ mount_network_shares() {
 }
 
 unpack_stage_tarball() {
-  fetch "${stage_uri}" "${chroot_dir}/$(get_filename_from_uri ${stage_uri})" || die "Could not fetch a stage tarball from: ${stage_uri}"
-  unpack_tarball "${chroot_dir}/$(get_filename_from_uri ${stage_uri})" "${chroot_dir}" 1 || die "Could not unpack the stage tarball."
+	fetch "${stage_uri}" "${chroot_dir}/$(get_filename_from_uri ${stage_uri})" || die "Could not fetch a stage tarball from: ${stage_uri}"
+	unpack_tarball "${chroot_dir}/$(get_filename_from_uri ${stage_uri})" "${chroot_dir}" 1 || die "Could not unpack the stage tarball."
 }
 
 prepare_chroot() {
-  debug prepare_chroot "Copying /etc/resolv.conf into chroot..."
-  spawn "cp /etc/resolv.conf ${chroot_dir}/etc/resolv.conf" || die "Could not copy /etc/resolv.conf into chroot."
-  debug prepare_chroot "mounting proc"
-  spawn "mount -t proc none ${chroot_dir}/proc" || die "Could not mount /proc"
-  echo "${chroot_dir}/proc" >> /tmp/install.umount
-  debug prepare_chroot "bind-mounting /dev"
-  spawn "mount -o bind /dev ${chroot_dir}/dev" || die "Could not bind-mount /dev"
-  echo "${chroot_dir}/dev" >> /tmp/install.umount
-  #todo: check this against 3.x kernels.
-  if [ "$(uname -r | cut -d. -f 2)" = "6" ]; then
-    debug prepare_chroot "bind-mounting /sys"
-    spawn "mount -o bind /sys ${chroot_dir}/sys" || die "Could not bind-mount /sys"
-    echo "${chroot_dir}/sys" >> /tmp/install.umount
-  else
-    debug prepare_chroot "Kernel is not 2.6...not bind-mounting /sys"
-  fi
+	debug prepare_chroot "Copying /etc/resolv.conf into chroot..."
+	spawn "cp /etc/resolv.conf ${chroot_dir}/etc/resolv.conf" || die "Could not copy /etc/resolv.conf into chroot."
+	debug prepare_chroot "mounting proc"
+	spawn "mount -t proc none ${chroot_dir}/proc" || die "Could not mount /proc"
+	echo "${chroot_dir}/proc" >> /tmp/install.umount
+	debug prepare_chroot "bind-mounting /dev"
+	spawn "mount -o bind /dev ${chroot_dir}/dev" || die "Could not bind-mount /dev"
+	echo "${chroot_dir}/dev" >> /tmp/install.umount
+
+	#todo: check this against 3.x kernels.
+	if [ "$(uname -r | cut -d. -f 2)" = "6" ]; then
+		debug prepare_chroot "bind-mounting /sys"
+		spawn "mount -o bind /sys ${chroot_dir}/sys" || die "Could not bind-mount /sys"
+		echo "${chroot_dir}/sys" >> /tmp/install.umount
+	else
+		debug prepare_chroot "Kernel is not 2.6...not bind-mounting /sys"
+	fi
 }
 
 install_portage_tree() {
-  debug install_portage_tree "tree_type is ${tree_type}"
-  if [ "${tree_type}" = "sync" ]; then
-    spawn_chroot "emerge --sync" || die "Could not sync the Portage tree."
-  elif [ "${tree_type}" = "snapshot" ]; then
-    fetch "${portage_snapshot_uri}" "${chroot_dir}/$(get_filename_from_uri ${portage_snapshot_uri})" || die "Could not fetch a Portage snapshot."
-    unpack_tarball "${chroot_dir}/$(get_filename_from_uri ${portage_snapshot_uri})" "${chroot_dir}/usr" || die "Could not unpack the Portage snapshot."
-  elif [ "${tree_type}" = "webrsync" ]; then
-    spawn_chroot "emerge-webrsync" || die "Could not emerge-webrsync."
-  elif [ "${tree_type}" = "none" ]; then
-    warn "'none' specified...skipping..."
-  else
-    die "Unrecognized tree_type: ${tree_type}"
-  fi
+	debug install_portage_tree "tree_type is ${tree_type}"
+	if [ "${tree_type}" = "sync" ]; then
+		spawn_chroot "emerge --sync" || die "Could not sync the Portage tree"
+	elif [ "${tree_type}" = "snapshot" ]; then
+		fetch "${portage_snapshot_uri}" "${chroot_dir}/$(get_filename_from_uri ${portage_snapshot_uri})" || die "Could not fetch a Portage snapshot"
+		unpack_tarball "${chroot_dir}/$(get_filename_from_uri ${portage_snapshot_uri})" "${chroot_dir}/usr" || die "Could not unpack the Portage snapshot"
+	elif [ "${tree_type}" = "webrsync" ]; then
+		spawn_chroot "emerge-webrsync" || die "Could not emerge-webrsync"
+	elif [ "${tree_type}" = "none" ]; then
+		warn "'none' specified...skipping..."
+	else
+		die "Unrecognized tree_type: ${tree_type}"
+	fi
 }
 
 set_root_password() {
-  if [ -n "${root_password_hash}" ]; then
-    spawn_chroot "echo 'root:${root_password_hash}' | chpasswd -e" || die "Could not set the system's root password."
-  elif [ -n "${root_password}" ]; then
-    spawn_chroot "echo 'root:${root_password}' | chpasswd" || die "Could not set the system's root password."
-  fi
+	if [ -n "${root_password_hash}" ]; then
+		spawn_chroot "echo 'root:${root_password_hash}' | chpasswd -e" || die "Could not set the system's root password"
+	elif [ -n "${root_password}" ]; then
+		spawn_chroot "echo 'root:${root_password}' | chpasswd" || die "Could not set the system's root password"
+	fi
 }
 # todo: testing
 set_hostname() {
-if [ -n "${hostname}" ]; then
-spawn_chroot "echo hostname=\"${hostname}\" > ${chroot_dir}/etc/conf.d/hostname" || die "Could not set \"${hostname}\" as the system hostname."
-fi
+	if [ -n "${hostname}" ]; then
+		spawn_chroot "echo hostname=\"${hostname}\" > ${chroot_dir}/etc/conf.d/hostname" || die "Could not set \"${hostname}\" as the system hostname."
+	fi
 }
 
 set_timezone() {
-  [ -e "${chroot_dir}/etc/localtime" ] && spawn "rm ${chroot_dir}/etc/localtime" || die "Could not remove existing /etc/localtime"
-  spawn "cp ${chroot_dir}/usr/share/zoneinfo/${timezone} ${chroot_dir}/etc/localtime" || die "Could not set the timezone as \"${timezone}\". Is it a valid timezone?"
-  if [ -e "${chroot_dir}/etc/conf.d/clock" ]; then
-    spawn "/bin/sed -i 's:#TIMEZONE=\"Factory\":TIMEZONE=\"${timezone}\":' ${chroot_dir}/etc/conf.d/clock" || die "Could not adjust TIMEZONE configuration found at in /etc/conf.d/clock"
-  else
-    echo "${timezone}" > "${chroot_dir}/etc/timezone"
-  fi
+	[ -e "${chroot_dir}/etc/localtime" ] && spawn "rm ${chroot_dir}/etc/localtime" || die "Could not remove existing /etc/localtime"
+		spawn "cp ${chroot_dir}/usr/share/zoneinfo/${timezone} ${chroot_dir}/etc/localtime" || die "Could not set the timezone as \"${timezone}\". Is it a valid timezone?"
+	if [ -e "${chroot_dir}/etc/conf.d/clock" ]; then
+		spawn "/bin/sed -i 's:#TIMEZONE=\"Factory\":TIMEZONE=\"${timezone}\":' ${chroot_dir}/etc/conf.d/clock" || die "Could not adjust TIMEZONE configuration found at in /etc/conf.d/clock"
+	else
+		echo "${timezone}" > "${chroot_dir}/etc/timezone"
+	fi
 }
 
 build_kernel() {
-  if [ "${kernel_sources}" = "none" ]; then
-    debug build_kernel "kernel_sources is 'none'...skipping kernel build."
-  else
-    spawn_chroot "emerge ${kernel_sources}" || die "Could not emerge \"${kernel_sources}\" kernel sources."
-    spawn_chroot "emerge genkernel" || die "Could not emerge genkernel."
-    if [ -n "${kernel_config_uri}" ]; then
-      fetch "${kernel_config_uri}" "${chroot_dir}/tmp/kconfig" || die "Could not fetch kernel a configuration file."
-      spawn_chroot "genkernel --kernel-config=/tmp/kconfig ${genkernel_opts} kernel" || die "Could not build a custom kernel."
-    else
-      spawn_chroot "genkernel ${genkernel_opts} all" || die "Could not build a generic kernel."
-    fi
-  fi
+	if [ "${kernel_sources}" = "none" ]; then
+		debug build_kernel "kernel_sources is 'none'...skipping kernel build."
+	else
+		spawn_chroot "emerge ${kernel_sources}" || die "Could not emerge \"${kernel_sources}\" kernel sources."
+		spawn_chroot "emerge genkernel" || die "Could not emerge genkernel."
+		if [ -n "${kernel_config_uri}" ]; then
+			fetch "${kernel_config_uri}" "${chroot_dir}/tmp/kconfig" || die "Could not fetch kernel a configuration file."
+			spawn_chroot "genkernel --kernel-config=/tmp/kconfig ${genkernel_opts} kernel" || die "Could not build a custom kernel."
+		else
+			spawn_chroot "genkernel ${genkernel_opts} all" || die "Could not build a generic kernel."
+		fi
+	fi
 }
 
 install_logging_daemon() {
-  if [ "${logging_daemon}" = "none" ]; then
-    debug install_logging_daemon "logging_daemon is 'none'...skipping."
-  else
-    spawn_chroot "emerge ${logging_daemon}" || die "Could not emerge \" ${logging_daemon}\"logging daemon."
-    spawn_chroot "rc-update add ${logging_daemon} default" || die "Could not add logging daemon to default runlevel."
-  fi
+	if [ "${logging_daemon}" = "none" ]; then
+		debug install_logging_daemon "logging_daemon is 'none'...skipping."
+	else
+		spawn_chroot "emerge ${logging_daemon}" || die "Could not emerge \" ${logging_daemon}\"logging daemon."
+		spawn_chroot "rc-update add ${logging_daemon} default" || die "Could not add logging daemon to default runlevel."
+	fi
 }
 
 install_cron_daemon() {
-  if [ "${cron_daemon}" = "none" ]; then
-    debug install_cron_daemon "cron_daemon is 'none'...skipping"
-  else
-    spawn_chroot "emerge ${cron_daemon}" || die "Could not emerge \"${cron_daemon}\" cron daemon."
-    spawn_chroot "rc-update add ${cron_daemon} default" || die "Could not add a cron daemon to the default runlevel."
-  fi
+	if [ "${cron_daemon}" = "none" ]; then
+		debug install_cron_daemon "cron_daemon is 'none'...skipping"
+	else
+		spawn_chroot "emerge ${cron_daemon}" || die "Could not emerge \"${cron_daemon}\" cron daemon."
+		spawn_chroot "rc-update add ${cron_daemon} default" || die "Could not add a cron daemon to the default runlevel."
+	fi
 }
 
 setup_fstab() {
-  echo -e "none\t/proc\tproc\tdefaults\t0 0\nnone\t/dev/shm\ttmpfs\tdefaults\t0 0" > ${chroot_dir}/etc/fstab
-  for mount in ${localmounts}; do
-    debug setup_fstab "mount is ${mount}"
-    local devnode=$(echo ${mount} | cut -d ':' -f1)
-    local type=$(echo ${mount} | cut -d ':' -f2)
-    local mountpoint=$(echo ${mount} | cut -d ':' -f3)
-    local mountopts=$(echo ${mount} | cut -d ':' -f4)
-    if [ "${mountpoint}" == "/" ]; then
-      local dump_pass="0 1"
-    elif [ "${mountpoint}" == "/boot" -o "${mountpoint}" == "/boot/" ]; then
-      local dump_pass="1 2"
-    else
-      local dump_pass="0 0"
-    fi
-    echo -e "${devnode}\t${mountpoint}\t${type}\t${mountopts}\t${dump_pass}" >> ${chroot_dir}/etc/fstab
-  done
-  for mount in ${netmounts}; do
-    local export=$(echo ${mount} | cut -d '|' -f1)
-    local type=$(echo ${mount} | cut -d '|' -f2)
-    local mountpoint=$(echo ${mount} | cut -d '|' -f3)
-    local mountopts=$(echo ${mount} | cut -d '|' -f4)
-    echo -e "${export}\t${mountpoint}\t${type}\t${mountopts}\t0 0" >> ${chroot_dir}/etc/fstab
-  done
+	echo -e "none\t/proc\tproc\tdefaults\t0 0\nnone\t/dev/shm\ttmpfs\tdefaults\t0 0" > ${chroot_dir}/etc/fstab
+	for mount in ${localmounts}; do
+		debug setup_fstab "mount is ${mount}"
+		local devnode=$(echo ${mount} | cut -d ':' -f1)
+		local type=$(echo ${mount} | cut -d ':' -f2)
+		local mountpoint=$(echo ${mount} | cut -d ':' -f3)
+		local mountopts=$(echo ${mount} | cut -d ':' -f4)
+		if [ "${mountpoint}" == "/" ]; then
+			local dump_pass="0 1"
+		elif [ "${mountpoint}" == "/boot" -o "${mountpoint}" == "/boot/" ]; then
+			local dump_pass="1 2"
+		else
+			local dump_pass="0 0"
+		fi
+		echo -e "${devnode}\t${mountpoint}\t${type}\t${mountopts}\t${dump_pass}" >> ${chroot_dir}/etc/fstab
+	done
+	for mount in ${netmounts}; do
+		local export=$(echo ${mount} | cut -d '|' -f1)
+		local type=$(echo ${mount} | cut -d '|' -f2)
+		local mountpoint=$(echo ${mount} | cut -d '|' -f3)
+		local mountopts=$(echo ${mount} | cut -d '|' -f4)
+		echo -e "${export}\t${mountpoint}\t${type}\t${mountopts}\t0 0" >> ${chroot_dir}/etc/fstab
+	done
 }
 
 setup_network_post() {
@@ -307,99 +309,99 @@ setup_network_post() {
 }
 
 add_and_remove_services() {
-  if [ -n "${services_add}" ]; then
-    for service_add in ${services_add}; do
-      local service="$(echo ${service_add} | cut -d '|' -f1)"
-      local runlevel="$(echo ${service_add} | cut -d '|' -f2)"
-      spawn_chroot "rc-update add ${service} ${runlevel}" || die "Could not add service ${service} to the ${runlevel} runlevel."
-    done
-  fi
-  if [ -n "${services_del}" ]; then
-    for service_del in ${services_del}; do
-      service="$(echo ${service_del} | cut -d '|' -f1)"
-      runlevel="$(echo ${service_del} | cut -d '|' -f2)"
-      spawn_chroot "rc-update del ${service} ${runlevel}"
-    done
-  fi
+	if [ -n "${services_add}" ]; then
+		for service_add in ${services_add}; do
+			local service="$(echo ${service_add} | cut -d '|' -f1)"
+			local runlevel="$(echo ${service_add} | cut -d '|' -f2)"
+			spawn_chroot "rc-update add ${service} ${runlevel}" || die "Could not add service ${service} to the ${runlevel} runlevel."
+		done
+	fi
+	if [ -n "${services_del}" ]; then
+		for service_del in ${services_del}; do
+			service="$(echo ${service_del} | cut -d '|' -f1)"
+			runlevel="$(echo ${service_del} | cut -d '|' -f2)"
+			spawn_chroot "rc-update del ${service} ${runlevel}"
+		done
+	fi
 }
 
 install_bootloader() {
-  if [ "${bootloader}" = "none" ]; then
-    debug install_bootloader "bootloader is 'none'...skipping"
-  elif [ "${bootloader}" = "grub-legacy" ]; then
-	spawn_chroot "emerge --noreplace sys-boot/grub:0" || die "Could not emerge Grub legacy bootloader."
-  elif [ "${bootloader}" = "lilo" ]; then
-	spawn_chroot "emerge sys-boot/lilo" || die "Could not emerge the LiLo bootloader."
-  else
-    spawn_chroot "emerge ${bootloader}" || die "Could not emerge the Grub2 bootloader."
-  fi
+	if [ "${bootloader}" = "none" ]; then
+		debug install_bootloader "bootloader is 'none'...skipping"
+	elif [ "${bootloader}" = "grub-legacy" ]; then
+		spawn_chroot "emerge --noreplace sys-boot/grub:0" || die "Could not emerge Grub legacy bootloader."
+	elif [ "${bootloader}" = "lilo" ]; then
+		spawn_chroot "emerge sys-boot/lilo" || die "Could not emerge the LiLo bootloader."
+	else
+		spawn_chroot "emerge ${bootloader}" || die "Could not emerge the Grub2 bootloader."
+	fi
 }
 
 configure_bootloader() {
-  if [ "${bootloader}" = "none" ]; then
-    debug configure_bootloader "bootloader is 'none'...skipping configuration."
-  else
-    if $(isafunc configure_bootloader_${bootloader}); then
-      configure_bootloader_${bootloader} || die "Could not configure bootloader \"${bootloader}\""
-    else
-      die "I don't know how to configure ${bootloader}"
-    fi
-  fi
+	if [ "${bootloader}" = "none" ]; then
+		debug configure_bootloader "bootloader is 'none'...skipping configuration."
+	else
+		if $(isafunc configure_bootloader_${bootloader}); then
+			configure_bootloader_${bootloader} || die "Could not configure bootloader \"${bootloader}\""
+		else
+			die "I don't know how to configure ${bootloader}"
+		fi
+	fi
 }
 
 install_extra_packages() {
-  if [ -z "${extra_packages}" ]; then
-    debug install_extra_packages "No extra packages specified."
-  else
-    spawn_chroot "emerge ${extra_packages}" || die "Could not emerge extra packages."
-  fi
+	if [ -z "${extra_packages}" ]; then
+		debug install_extra_packages "No extra packages specified."
+	else
+		spawn_chroot "emerge ${extra_packages}" || die "Could not emerge extra packages."
+	fi
 }
 
 run_post_install_script() {
-  if [ -n "${post_install_script_uri}" ]; then
-    fetch "${post_install_script_uri}" "${chroot_dir}/var/tmp/post_install_script" || die "Could not fetch post-install script."
-    chmod +x "${chroot_dir}/var/tmp/post_install_script"
-    spawn_chroot "/var/tmp/post_install_script" || die "Error running post-install script."
-    spawn "rm ${chroot_dir}/var/tmp/post_install_script"
-  elif $(isafunc post_install); then
-    post_install || die "Error running post_install()"
-  else
-    debug run_post_install_script "No post-install script set."
-  fi
+if [ -n "${post_install_script_uri}" ]; then
+	fetch "${post_install_script_uri}" "${chroot_dir}/var/tmp/post_install_script" || die "Could not fetch post-install script."
+	chmod +x "${chroot_dir}/var/tmp/post_install_script"
+	spawn_chroot "/var/tmp/post_install_script" || die "Error running post-install script."
+	spawn "rm ${chroot_dir}/var/tmp/post_install_script"
+elif $(isafunc post_install); then
+	post_install || die "Error running post_install()"
+else
+	debug run_post_install_script "No post-install script set."
+fi
 }
 
 finishing_cleanup() {
-  spawn "cp ${logfile} ${chroot_dir}/root/$(basename ${logfile})" || warn "Could not copy install logfile into chroot."
-  if [ -e /tmp/install.umount ]; then
-    for mnt in $(sort -r /tmp/install.umount); do
-      spawn "umount ${mnt}" || warn "Could not unmount ${mnt}"
-      rm /tmp/install.umount 2>/dev/null
-    done
-  fi
-  if [ -e /tmp/install.swapoff ]; then
-    for swap in $(</tmp/install.swapoff); do
-      spawn "swapoff ${swap}" || warn "Could not deactivate swap on ${swap}"
-    done
-    rm /tmp/install.swapoff 2>/dev/null
-  fi
+	spawn "cp ${logfile} ${chroot_dir}/root/$(basename ${logfile})" || warn "Could not copy install logfile into chroot."
+	if [ -e /tmp/install.umount ]; then
+		for mnt in $(sort -r /tmp/install.umount); do
+			spawn "umount ${mnt}" || warn "Could not unmount ${mnt}"
+			rm /tmp/install.umount 2>/dev/null
+		done
+	fi
+	if [ -e /tmp/install.swapoff ]; then
+		for swap in $(</tmp/install.swapoff); do
+			spawn "swapoff ${swap}" || warn "Could not deactivate swap on ${swap}"
+		done
+		rm /tmp/install.swapoff 2>/dev/null
+	fi
 }
 
 failure_cleanup() {
-  spawn "mv ${logfile} ${logfile}.failed" || warn "Could not move ${logfile} to ${logfile}.failed"
-  if [ -e /tmp/install.umount ]; then
-    for mnt in $(sort -r /tmp/install.umount); do
-      spawn "umount ${mnt}" || warn "Could not unmount ${mnt}"
-    done
-    rm /tmp/install.umount 2>/dev/null
-  fi
-  if [ -e /tmp/install.swapoff ]; then
-    for swap in $(</tmp/install.swapoff); do
-      spawn "swapoff ${swap}" || warn "Could not deactivate swap on ${swap}"
-    done
-    rm /tmp/install.swapoff 2>/dev/null
-  fi
-  for array in $(set | grep '^mdraid_' | cut -d= -f1 | sed -e 's:^mdraid_::' | sort); do
-    spawn "mdadm --manage --stop /dev/${array}" || die "Could not stop mdraid array ${array}"
-  done
+	spawn "mv ${logfile} ${logfile}.failed" || warn "Could not move ${logfile} to ${logfile}.failed"
+	if [ -e /tmp/install.umount ]; then
+		for mnt in $(sort -r /tmp/install.umount); do
+			spawn "umount ${mnt}" || warn "Could not unmount ${mnt}"
+		done
+		rm /tmp/install.umount 2>/dev/null
+	fi
+	if [ -e /tmp/install.swapoff ]; then
+		for swap in $(</tmp/install.swapoff); do
+			spawn "swapoff ${swap}" || warn "Could not deactivate swap on ${swap}"
+		done
+		rm /tmp/install.swapoff 2>/dev/null
+	fi
+	for array in $(set | grep '^mdraid_' | cut -d= -f1 | sed -e 's:^mdraid_::' | sort); do
+		spawn "mdadm --manage --stop /dev/${array}" || die "Could not stop mdraid array ${array}"
+	done
 }
 

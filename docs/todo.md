@@ -1,4 +1,4 @@
-###ToDo###
+### Todo
 
 - [x] ~~Write a package building script to auto-generate new releases.~~
   1. ~~Implement Stage7 package script with super tight compression for minimal bandwidth consumption and maximum fun (xz).~~ *Done!*
@@ -9,13 +9,13 @@
   3. Search the configuration options file in /docs folder for #todo stuff.
   4. Generate a PDF of available configuration options in a pretty format (user manual).
   5. ~~Generate a dependencies list in /docs for GitHub viewers.~~
-- [ ] Modernize the Stage7 base
+- [ ] Modernize the stage7 base:
   1. Add GPT and EFI support.
-  2. Add GRUB2 support. *in progress*
+  2. Add GRUB2 support. *In progress*
   3. Add Linux Loader (Lilo) support.
-  4. Add Systemd support (Do not expect this for a while...)
-  5. Add Parted support.
-  6. Add btrfs file system, btrfs RAID, and SSD hard drive support.
+  4. Add systemd support.
+  5. Add (scripted) parted support.
+  6. Add btrfs file system, btrfs RAID, and SSD support.
   7. Add hardened and vanilla kernel support.
   8. Verify both x86 and AMD64 architectures are operational.
   9. Add predictable network interface names support.
@@ -23,13 +23,15 @@
   11. ~~Add a utilities and tool check to be sure important components are not missing from the system.~~
   12. Create stage 4 backup option (-b|--backup)
   13. Make the usage options more modular; let the user specify more than one option at a time.
-- [ ] Add extended functionality to Stage7.
-  1. Add automatic X server install support as a Stage7 profile.
-  2. Add automatic OpenBox install/configure support as a Stage7 profile.
+  14. Beautify code; improve variable references, etc... *In progress...*
+  15. Add a pre_chroot and chroot dependancy check. Without tools install will fail, this is why it should check for them.
+- [ ] Add extended functionality:
+  1. Add automatic X server install support as a stage7 profile.
+  2. Add automatic OpenBox install/configure support as a stage7 profile.
     - [ ] Include themes support for OpenBox.
 	- [ ] Include power management support.
-  3. Start Digital Survival server platform functionality after Stage7 desktop functionality is complete.
-  4. Create Stage7 recovery disk from which to install or capture an image/disk.
+  3. Start Digital Survival server platform functionality after stage7 desktop functionality is complete.
+  4. Create stage7 recovery disk from which to install or capture an image/disk.
   5. Add stage 4 rescue support to a Linux recovery disk (yet to be named).
 - [ ] Digital Survival integration
   1. Add overlay support (via new Portage repo.conf stuff).
