@@ -1,1 +1,0 @@
-A directory of OpenBox themes.
